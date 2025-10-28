@@ -66,7 +66,7 @@ export default function StaffProfilePage() {
                 {staff.photo_url ? (
                   <Image
                     src={staff.photo_url}
-                    alt={isMalay ? staff.name_ms : staff.name_en}
+                    alt={isMalay ? staff.name_ms || staff.name_en : staff.name_en}
                     width={160}
                     height={160}
                     className="object-cover w-full h-full"
