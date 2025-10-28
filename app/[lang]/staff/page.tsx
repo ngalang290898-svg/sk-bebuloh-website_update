@@ -1,40 +1,110 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/lib/i18n';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import StaffCard from '@/components/StaffCard';
 import GlassCard from '@/components/GlassCard';
-import { Search, Filter } from 'lucide-react';
-import staffData from '@/data/staff.json';
+import { Search, Filter, RefreshCw } from 'lucide-react';
+import { fetchStaffFromEndpoint } from '@/lib/fetchers';
 import { departmentTranslations } from '@/lib/utils';
+import type { StaffMember } from '@/lib/types';
 
 export default function StaffPage() {
   const { language, t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const departments = useMemo(() => {
-    const allDepts = staffData.flatMap(staff => staff.departments);
-    const uniqueDepts = [...new Set(allDepts)].sort();
-    return ['all', ...uniqueDepts];
+  const loadStaffData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const endpoint = process.env.NEXT_PUBLIC_STAFF_ENDPOINT;
+      if (!endpoint) {
+        throw new Error('Staff endpoint not configured');
+      }
+      
+      const staffData = await fetchStaffFromEndpoint(endpoint);
+      setStaff(staffData);
+      
+      if (staffData.length === 0) {
+        setError('No staff data found. Please check the data source.');
+      }
+    } catch (err) {
+      console.error('Failed to load staff data:', err);
+      setError('Failed to load staff data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadStaffData();
   }, []);
 
-  const filteredStaff = useMemo(() => {
-    return staffData.filter(staff => {
-      const matchesSearch = staff.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          staff.name_ms.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          staff.role_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          staff.role_ms.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesDept = selectedDepartment === 'all' || 
-                         staff.departments.includes(selectedDepartment);
-      
-      return matchesSearch && matchesDept;
-    });
-  }, [searchTerm, selectedDepartment]);
+  // Get unique departments for filter
+  const departments = ['all', ...Array.from(new Set(staff.flatMap(s => s.departments)))].sort();
+
+  // Filter staff based on search and department
+  const filteredStaff = staff.filter(member => {
+    const matchesSearch = 
+      member.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.name_ms.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.role_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.role_ms.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.department_en?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.traits.some(trait => trait.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesDept = selectedDepartment === 'all' || member.departments.includes(selectedDepartment);
+
+    return matchesSearch && matchesDept;
+  });
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-pastel-bg">
+        <Navbar />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <GlassCard>
+            <div className="flex items-center justify-center space-x-3">
+              <RefreshCw className="w-6 h-6 animate-spin text-primary" />
+              <p className="text-text-primary">Loading staff data from Google Sheets...</p>
+            </div>
+          </GlassCard>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen bg-pastel-bg">
+        <Navbar />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <GlassCard>
+            <div className="space-y-4">
+              <h2 className="font-montserrat font-bold text-2xl text-text-primary">Data Loading Error</h2>
+              <p className="text-text-secondary">{error}</p>
+              <button
+                onClick={loadStaffData}
+                className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-accent-red transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </GlassCard>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-pastel-bg">
@@ -53,9 +123,18 @@ export default function StaffPage() {
             </h1>
             <p className="text-xl text-text-secondary max-w-2xl mx-auto">
               {language === 'ms' 
-                ? 'Bertemu dengan guru dan kakitangan berdedikasi kami' 
-                : 'Meet our dedicated teachers and staff members'}
+                ? `Bertemu dengan ${staff.length} guru dan kakitangan berdedikasi kami` 
+                : `Meet our ${staff.length} dedicated teachers and staff members`}
             </p>
+            <div className="mt-4 flex justify-center space-x-4">
+              <button
+                onClick={loadStaffData}
+                className="flex items-center space-x-2 text-primary hover:text-accent-red transition-colors"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span className="text-sm">Refresh Data</span>
+              </button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -95,6 +174,14 @@ export default function StaffPage() {
                   ))}
                 </select>
               </div>
+            </div>
+
+            {/* Results Count */}
+            <div className="mt-4 text-sm text-text-secondary">
+              {filteredStaff.length === staff.length 
+                ? `Showing all ${staff.length} staff members`
+                : `Showing ${filteredStaff.length} of ${staff.length} staff members`
+              }
             </div>
           </GlassCard>
         </div>
@@ -145,5 +232,5 @@ export default function StaffPage() {
 
       <Footer />
     </main>
-  )
+  );
 }
