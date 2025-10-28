@@ -9,11 +9,27 @@ import type { StaffMember } from '@/lib/types';
 import Image from 'next/image';
 import staffData from '@/data/staff.json';
 
+"use client";
+import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+
 export default function StaffProfilePage() {
   const params = useParams();
-  const id = params.id as string;
+
+  // ✅ Ensure params exists before accessing id
+  const id = params?.id ? String(params.id) : "";
+
   const [staff, setStaff] = useState<StaffMember | null>(null);
-  const [language, setLanguage] = useState<'en' | 'ms'>('en');
+  const [language, setLanguage] = useState<"en" | "ms">("en");
+
+  useEffect(() => {
+    if (id) {
+      // fetch or load staff data here
+    }
+  }, [id]);
+  
+  // ... (rest of your component)
+}
 
   useEffect(() => {
     // Find staff member by ID
