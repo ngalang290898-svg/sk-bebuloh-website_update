@@ -1,1 +1,9 @@
-
+{
+  "name": "Sekolah Kebangsaan Bebuloh Labuan",
+  "code": "WBA1001",
+  "motto": "Superbia | Unitas | Triumphus",
+  "logo_url": "/logo.svg",
+  "established": 1965,
+  "type": "National Primary School",
+  "location": "Labuan Federal Territory"
+}
