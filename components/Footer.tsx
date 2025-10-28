@@ -1,5 +1,4 @@
 'use client';
-
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/i18n';
 import { School, Mail, Phone, MapPin } from 'lucide-react';
