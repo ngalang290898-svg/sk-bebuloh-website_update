@@ -96,7 +96,7 @@ export default function StaffProfilePage() {
               </div>
 
               {/* Traits */}
-              {staff.traits?.length > 0 && (
+              {Array.isArray(staff.traits) && staff.traits.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-2">
                   {staff.traits.map((t, i) => (
                     <span
