@@ -54,12 +54,12 @@ export default function StaffPage() {
   // Filter staff based on search and department
   const filteredStaff = staff.filter(member => {
     const matchesSearch = 
-      member.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.name_ms.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.role_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.role_ms.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.department_en?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.traits.some(trait => trait.toLowerCase().includes(searchTerm.toLowerCase()));
+     (member.name_en || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+(member.name_ms || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+(member.role_en || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+(member.role_ms || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+(member.department_en || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+(Array.isArray(member.traits) && member.traits.some(trait => trait.toLowerCase().includes(searchTerm.toLowerCase())))
 
     const matchesDept = selectedDepartment === 'all' || member.departments.includes(selectedDepartment);
 
