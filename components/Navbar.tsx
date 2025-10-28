@@ -1,115 +1,79 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '@/lib/i18n';
-import { Menu, X, School } from 'lucide-react';
-import LanguageToggle from './LanguageToggle';
+import Link from "next/link";
+import { useLanguage } from "@/lib/i18n";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t } = useLanguage();
+  const { language, t, setLanguage } = useLanguage();
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navItems = [
-    { key: 'nav.home', href: '/' },
-    { key: 'nav.about', href: '/about' },
-    { key: 'nav.staff', href: '/staff' },
-    { key: 'nav.news', href: '/news' },
-    { key: 'nav.gallery', href: '/gallery' },
-    { key: 'nav.contact', href: '/contact' },
+  const navLinks = [
+    { href: "", label: t("nav.home") },
+    { href: "about", label: t("nav.about") },
+    { href: "staff", label: t("nav.staff") },
+    { href: "rewards", label: t("nav.rewards") },
   ];
 
+  const toggleLanguage = () => {
+    setLanguage(language === "ms" ? "en" : "ms");
+  };
+
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'glass-effect shadow-lg py-2' 
-          : 'bg-transparent py-4'
-      }`}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <motion.div 
-            className="flex items-center space-x-3"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent-red rounded-full flex items-center justify-center">
-              <School className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="font-montserrat font-bold text-lg text-text-primary">
-                SK Bebuloh
-              </h1>
-              <p className="text-xs text-text-secondary">Labuan</p>
-            </div>
-          </motion.div>
+    <nav className="w-full fixed top-0 left-0 z-50 bg-white/40 backdrop-blur-lg border-b border-glass-border">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <Link href={`/${language}`} className="font-montserrat font-bold text-xl text-primary">
+          SK BEBULOH
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <motion.a
-                key={item.key}
-                href={item.href}
-                className="font-medium text-text-primary hover:text-primary transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {t(item.key)}
-              </motion.a>
-            ))}
-            <LanguageToggle />
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center space-x-4">
-            <LanguageToggle />
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-text-primary"
+        <div className="hidden md:flex gap-6">
+          {navLinks.map((link, idx) => (
+            <Link
+              key={idx}
+              href={`/${language}/${link.href}`}
+              className={`text-text-primary hover:text-primary transition ${
+                pathname.endsWith(link.href) ? "text-primary font-semibold" : ""
+              }`}
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+              {link.label}
+            </Link>
+          ))}
         </div>
 
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4 glass-effect rounded-2xl overflow-hidden"
-            >
-              <div className="p-4 space-y-4">
-                {navItems.map((item) => (
-                  <motion.a
-                    key={item.key}
-                    href={item.href}
-                    className="block font-medium text-text-primary hover:text-primary transition-colors py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    whileHover={{ x: 10 }}
-                  >
-                    {t(item.key)}
-                  </motion.a>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Language Toggle */}
+        <button
+          onClick={toggleLanguage}
+          className="px-3 py-1 rounded-full bg-primary text-white font-semibold text-sm hover:opacity-90"
+        >
+          {language === "ms" ? "EN" : "BM"}
+        </button>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          className="md:hidden text-primary ml-2"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
       </div>
-    </motion.nav>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-white/80 backdrop-blur-lg px-6 py-4 flex flex-col gap-3">
+          {navLinks.map((link, idx) => (
+            <Link
+              key={idx}
+              href={`/${language}/${link.href}`}
+              className="text-text-primary font-medium"
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </nav>
   );
 }
