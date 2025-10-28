@@ -1,1 +1,34 @@
-
+[
+  {
+    "id": "2f2f3029",
+    "teacher_id": "2f2f3029",
+    "name_en": "CHARISSA LEE PIT YING",
+    "name_ms": "CHARISSA LEE PIT YING",
+    "gender": "F",
+    "role_en": "Head of Department",
+    "role_ms": "Ketua Panitia",
+    "departments": ["English Department", "Music Department"],
+    "department_en": "English Department",
+    "department_ms": "Jabatan Bahasa Inggeris",
+    "bio_en": "CHARISSA combines expertise with kindness, guiding pupils through hands-on activities and reflective learning.",
+    "bio_ms": "CHARISSA menggabungkan kepakaran dengan keprihatinan, membimbing murid melalui aktiviti berasaskan amali dan pembelajaran reflektif.",
+    "traits": ["creative", "encouraging"],
+    "photo_url": "https://drive.google.com/uc?export=view&id=1o-FDU6ACyL7aMRWxC3ugCpJKvooOyp3x"
+  },
+  {
+    "id": "c59dd488",
+    "teacher_id": "c59dd488",
+    "name_en": "AHMAD NASUHA BIN MOHAMAD IZANI",
+    "name_ms": "AHMAD NASUHA BIN MOHAMAD IZANI",
+    "gender": "M",
+    "role_en": "Teacher",
+    "role_ms": "Guru",
+    "departments": ["English Department", "Music Department"],
+    "department_en": "English Department",
+    "department_ms": "Jabatan Bahasa Inggeris",
+    "bio_en": "AHMAD brings passion and clarity to the English Department, inspiring students to develop confidence and practical skills.",
+    "bio_ms": "AHMAD membawa semangat dan kejelasan dalam English Department, menginspirasi murid membina keyakinan dan kemahiran praktikal.",
+    "traits": ["creative", "encouraging"],
+    "photo_url": "https://drive.google.com/uc?export=view&id=1QpBiuvah65x7RVeHFZaL6r8FNSc9WSlQ"
+  }
+]
