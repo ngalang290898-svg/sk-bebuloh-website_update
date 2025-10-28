@@ -1,6 +1,7 @@
-'use client';
-import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+"use client";
+
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 interface GlassCardProps {
   children: ReactNode;
@@ -8,10 +9,8 @@ interface GlassCardProps {
   hover?: boolean;
 }
 
-export default function GlassCard({ children, className = '', hover = true }: GlassCardProps) {
-  const cardClass = `glass-card ${
-    hover ? 'glass-card-hover' : ''
-  } ${className}`;
+export default function GlassCard({ children, className = "", hover = true }: GlassCardProps) {
+  const cardClass = `glass-card ${hover ? "glass-card-hover" : ""} ${className}`;
 
   return (
     <motion.div
