@@ -1,11 +1,14 @@
-// Purpose: Fetch and normalize staff data from Google Apps Script
-// BM: Tujuan: Ambil dan normalisasikan data staf dari Google Apps Script
+// Purpose: Fetch and normalize staff data from Google Apps Script with automatic fallback
+// BM: Tujuan: Ambil dan normalisasikan data staf dari Google Apps Script dengan fallback automatik
 
 import type { StaffRaw, StaffMember } from './types';
 
-// Complete department translation map
+/* -------------------------------------------------------------------------- */
+/*                                TRANSLATIONS                                */
+/* -------------------------------------------------------------------------- */
+
 const DEPARTMENT_TRANSLATIONS: Record<string, string> = {
-  // English Department names to Malay
+  // English → Malay
   'English Department': 'Jabatan Bahasa Inggeris',
   'Administrative & Support Staff': 'Kakitangan Pentadbiran & Sokongan',
   'Islamic Education Department': 'Jabatan Pendidikan Islam',
@@ -21,8 +24,8 @@ const DEPARTMENT_TRANSLATIONS: Record<string, string> = {
   'RBT (Design & Technology) Department': 'Jabatan Reka Bentuk & Teknologi',
   'Science Department': 'Jabatan Sains',
   'History (Sejarah) Department': 'Jabatan Sejarah',
-  
-  // Role translations
+
+  // Roles
   'Head of Department': 'Ketua Panitia',
   'Teacher': 'Guru',
   'Headmaster': 'Guru Besar',
@@ -36,12 +39,16 @@ const DEPARTMENT_TRANSLATIONS: Record<string, string> = {
   'Preschool Assistant': 'Pembantu Prasekolah'
 };
 
+/* -------------------------------------------------------------------------- */
+/*                              HELPER FUNCTIONS                              */
+/* -------------------------------------------------------------------------- */
+
 export function extractDriveId(url?: string): string | null {
   if (!url) return null;
   try {
     const idMatch = url.match(/(?:id=|\/d\/)([A-Za-z0-9_-]{10,})/);
     return idMatch ? idMatch[1] : null;
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -49,13 +56,12 @@ export function extractDriveId(url?: string): string | null {
 function normalizeDepartments(value?: string | string[]): string[] {
   if (!value) return [];
   if (Array.isArray(value)) return value.map(v => String(v).trim()).filter(Boolean);
-  
-  // Handle various department separators
+
   return String(value)
     .split(/[,\/&;]| and | \+ | \| /i)
     .map(s => s.trim())
     .filter(Boolean)
-    .filter(dept => !dept.match(/^(http|https):\/\//)); // Remove URLs
+    .filter(dept => !dept.match(/^(http|https):\/\//));
 }
 
 function mapPrimaryDepartment(departments: string[]): { department_en?: string; department_ms?: string } {
@@ -70,27 +76,27 @@ function translateRole(roleEn?: string): string {
   return DEPARTMENT_TRANSLATIONS[roleEn] || roleEn;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                             NORMALIZATION CORE                             */
+/* -------------------------------------------------------------------------- */
+
 export function normalizeStaff(raw: StaffRaw): StaffMember {
-  // Handle departments - could be string or array
   const departments = normalizeDepartments(raw.departments as any);
   const { department_en, department_ms } = mapPrimaryDepartment(departments);
 
-  // Handle traits - could be string or array
   const traitsArr: string[] = raw.traits
     ? Array.isArray(raw.traits)
       ? raw.traits.map(String)
       : String(raw.traits).split(',').map(s => s.trim()).filter(Boolean)
     : [];
 
-  // Extract Drive ID and ensure proper photo URL
   const driveId = extractDriveId(raw.photo_url);
-  const photo_url = raw.photo_url || (driveId ? `https://drive.google.com/uc?export=view&id=${driveId}` : undefined);
+  const photo_url =
+    raw.photo_url || (driveId ? `https://drive.google.com/uc?export=view&id=${driveId}` : undefined);
 
-  // Handle name variations - some sheets might have name_en/name_ms, others just name
   const name_en = raw.name_en || raw.name || '';
   const name_ms = raw.name_ms || raw.name || '';
 
-  // Handle role variations
   const role_en = raw.role_en || raw.role || '';
   const role_ms = raw.role_ms || translateRole(role_en);
 
@@ -100,8 +106,8 @@ export function normalizeStaff(raw: StaffRaw): StaffMember {
     name_en: name_en.trim(),
     name_ms: name_ms.trim(),
     gender: raw.gender,
-    role_en: role_en,
-    role_ms: role_ms,
+    role_en,
+    role_ms,
     departments,
     department_en,
     department_ms,
@@ -111,10 +117,12 @@ export function normalizeStaff(raw: StaffRaw): StaffMember {
     photo_url,
     hod_photo_url: raw.hod_photo_url,
     ext_fields: Object.keys(raw).reduce((acc: Record<string, any>, k) => {
-      if (![
-        'teacher_id','name','name_en','name_ms','gender','role','role_en','role_ms',
-        'departments','bio_en','bio_ms','traits','photo_url','hod_photo_url'
-      ].includes(k)) {
+      if (
+        ![
+          'teacher_id', 'name', 'name_en', 'name_ms', 'gender', 'role', 'role_en', 'role_ms',
+          'departments', 'bio_en', 'bio_ms', 'traits', 'photo_url', 'hod_photo_url'
+        ].includes(k)
+      ) {
         acc[k] = (raw as any)[k];
       }
       return acc;
@@ -124,53 +132,56 @@ export function normalizeStaff(raw: StaffRaw): StaffMember {
   return staff;
 }
 
-// Load staff from Google Apps Script endpoint
+/* -------------------------------------------------------------------------- */
+/*                          MAIN FETCH + FALLBACK LOGIC                       */
+/* -------------------------------------------------------------------------- */
+
 export async function fetchStaffFromEndpoint(endpoint: string): Promise<StaffMember[]> {
   if (!endpoint) {
-    console.warn('No staff endpoint configured');
+    console.warn('⚠️ No staff endpoint configured');
     return [];
   }
-  
+
   try {
-    console.log('Fetching staff data from:', endpoint);
+    console.log('🔄 Fetching staff data from:', endpoint);
+
     const res = await fetch(endpoint, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Add cache busting for development
-      next: { revalidate: 3600 } // Revalidate every hour
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store'
     });
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
     const json: StaffRaw[] = await res.json();
-    console.log(`Fetched ${json.length} staff records`);
-    
-    const normalizedStaff = json.map(normalizeStaff);
-    
-    // Remove duplicates based on ID
-    const uniqueStaff = normalizedStaff.filter((staff, index, self) => 
-      index === self.findIndex(s => s.id === staff.id)
+    console.log(`✅ Fetched ${json.length} staff records`);
+
+    const normalized = json.map(normalizeStaff);
+    const unique = normalized.filter(
+      (staff, i, arr) => i === arr.findIndex(s => s.id === staff.id)
     );
-    
-    console.log(`Normalized to ${uniqueStaff.length} unique staff records`);
-    return uniqueStaff;
-    
+
+    console.log(`✨ Normalized to ${unique.length} unique staff records`);
+    return unique;
   } catch (e) {
-    console.error('Failed to fetch staff data:', e);
-    return [];
+    console.error('❌ Failed to fetch from Google Apps Script:', e);
+    console.warn('⚠️ Falling back to local staff-data.json...');
+    return loadStaffFromLocal(); // automatic fallback
   }
 }
 
-// Fallback to local data if API fails
+/* -------------------------------------------------------------------------- */
+/*                                 LOCAL DATA                                 */
+/* -------------------------------------------------------------------------- */
+
 export async function loadStaffFromLocal(): Promise<StaffMember[]> {
   try {
-    const staffData = require('../data/staff.json');
-    return staffData.map(normalizeStaff);
+    const staffData = require('../data/staff-data.json'); // local fallback file
+    const normalized = staffData.map(normalizeStaff);
+    console.log(`📦 Loaded ${normalized.length} staff records from local file`);
+    return normalized;
   } catch (e) {
+    console.error('❌ Failed to load local staff-data.json', e);
     return [];
   }
 }
