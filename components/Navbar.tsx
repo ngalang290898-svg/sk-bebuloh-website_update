@@ -10,16 +10,15 @@ export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // nav links - keep rewards removed for now (we will add only when you want)
   const navLinks = [
     { href: "", label: t("nav.home") },
     { href: "about", label: t("nav.about") },
-    { href: "staff", label: t("nav.staff") },
-    { href: "rewards", label: t("nav.rewards") },
+    { href: "staff", label: t("nav.staff") }
   ];
 
-  const toggleLanguage = () => {
-    setLanguage(language === "ms" ? "en" : "ms");
-  };
+  const setToEnglish = () => setLanguage("en");
+  const setToMalay = () => setLanguage("ms");
 
   return (
     <nav className="w-full fixed top-0 left-0 z-50 bg-white/40 backdrop-blur-lg border-b border-glass-border">
@@ -42,13 +41,23 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Language Toggle */}
-        <button
-          onClick={toggleLanguage}
-          className="px-3 py-1 rounded-full bg-primary text-white font-semibold text-sm hover:opacity-90"
-        >
-          {language === "ms" ? "EN" : "BM"}
-        </button>
+        {/* Language Buttons (side-by-side) */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={setToEnglish}
+            aria-label="Switch to English"
+            className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "en" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
+          >
+            EN
+          </button>
+          <button
+            onClick={setToMalay}
+            aria-label="Switch to Bahasa Malaysia"
+            className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "ms" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
+          >
+            BM
+          </button>
+        </div>
 
         {/* Mobile Menu Toggle */}
         <button
@@ -72,6 +81,21 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => { setLanguage("en"); setMenuOpen(false); }}
+              className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "en" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => { setLanguage("ms"); setMenuOpen(false); }}
+              className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "ms" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
+            >
+              BM
+            </button>
+          </div>
         </div>
       )}
     </nav>
