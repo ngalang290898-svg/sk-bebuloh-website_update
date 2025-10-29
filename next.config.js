@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   images: {
-    domains: ['drive.google.com', 'script.google.com', 'script.googleusercontent.com'],
+    domains: [
+      'drive.google.com',
+      'script.google.com',
+      'script.googleusercontent.com'
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -31,6 +32,6 @@ const nextConfig = {
     ];
   },
   output: 'standalone',
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
