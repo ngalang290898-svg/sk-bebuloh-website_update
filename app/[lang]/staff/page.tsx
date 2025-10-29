@@ -27,6 +27,7 @@ export default function StaffPage() {
   };
 
   const loadStaffData = async () => {
+    console.log("✅ STAFF ENDPOINT DETECTED:", process.env.NEXT_PUBLIC_STAFF_ENDPOINT);
     setLoading(true);
     setError(null);
 
