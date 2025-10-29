@@ -10,6 +10,7 @@ import GlassCard from '@/components/GlassCard';
 import { Search, Filter, RefreshCw } from 'lucide-react';
 import { fetchStaffFromEndpoint } from '@/lib/fetchers';
 import { departmentTranslations } from '@/lib/utils';
+import localStaffData from '@/data/staff-data.json';
 import type { StaffMember } from '@/lib/types';
 
 export default function StaffPage() {
@@ -20,21 +21,40 @@ export default function StaffPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const tryFetchEndpoint = async (endpoint: string) => {
+    // fetcher returns parsed StaffMember[] or throws
+    return await fetchStaffFromEndpoint(endpoint);
+  };
+
   const loadStaffData = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const endpoint = process.env.NEXT_PUBLIC_STAFF_ENDPOINT;
-      if (!endpoint) {
-        throw new Error('Staff endpoint not configured');
+      let staffData: StaffMember[] = [];
+
+      if (endpoint) {
+        try {
+          staffData = await tryFetchEndpoint(endpoint);
+        } catch (err) {
+          console.warn('Fetching from endpoint failed, falling back to local data:', err);
+          // do not throw here — fallback to local below
+        }
       }
-      
-      const staffData = await fetchStaffFromEndpoint(endpoint);
+
+      // fallback to local packaged JSON if endpoint not set or failed
+      if (!staffData || staffData.length === 0) {
+        // localStaffData is imported from /data/staff-data.json
+        staffData = Array.isArray(localStaffData) ? (localStaffData as StaffMember[]) : [];
+      }
+
       setStaff(staffData);
-      
-      if (staffData.length === 0) {
+
+      if (!staffData || staffData.length === 0) {
         setError('No staff data found. Please check the data source.');
+      } else {
+        setError(null);
       }
     } catch (err) {
       console.error('Failed to load staff data:', err);
@@ -46,22 +66,43 @@ export default function StaffPage() {
 
   useEffect(() => {
     loadStaffData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Get unique departments for filter
-  const departments = ['all', ...Array.from(new Set(staff.flatMap(s => s.departments)))].sort();
+  // Normalize departments: if item has array `departments` use that, otherwise derive from `department_en` / `department_ms`
+  const extractDepartmentsFromMember = (m: StaffMember) => {
+    if (Array.isArray((m as any).departments) && (m as any).departments.length > 0) {
+      return (m as any).departments as string[];
+    }
+    const d = [];
+    if (m.department_en) d.push(String(m.department_en));
+    else if ((m as any).department) d.push(String((m as any).department)); // fallback if different key
+    return d;
+  };
+
+  const departments = [
+    'all',
+    ...Array.from(
+      new Set(
+        staff.flatMap(s => extractDepartmentsFromMember(s)).filter(Boolean)
+      )
+    ),
+  ].sort();
 
   // Filter staff based on search and department
   const filteredStaff = staff.filter(member => {
-    const matchesSearch = 
-     (member.name_en || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-(member.name_ms || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-(member.role_en || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-(member.role_ms || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-(member.department_en || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-(Array.isArray(member.traits) && member.traits.some(trait => trait.toLowerCase().includes(searchTerm.toLowerCase())))
+    const search = searchTerm.trim().toLowerCase();
 
-    const matchesDept = selectedDepartment === 'all' || member.departments.includes(selectedDepartment);
+    const matchesSearch =
+      (member.name_en || '').toLowerCase().includes(search) ||
+      (member.name_ms || '').toLowerCase().includes(search) ||
+      (member.role_en || '').toLowerCase().includes(search) ||
+      (member.role_ms || '').toLowerCase().includes(search) ||
+      (member.department_en || '').toLowerCase().includes(search) ||
+      (Array.isArray(member.traits) && member.traits.some(trait => trait.toLowerCase().includes(search)));
+
+    const memberDepts = extractDepartmentsFromMember(member);
+    const matchesDept = selectedDepartment === 'all' || memberDepts.includes(selectedDepartment);
 
     return matchesSearch && matchesDept;
   });
@@ -109,7 +150,7 @@ export default function StaffPage() {
   return (
     <main className="min-h-screen bg-pastel-bg">
       <Navbar />
-      
+
       {/* Header */}
       <section className="pt-32 pb-20 bg-gradient-to-br from-primary/10 to-accent-red/10">
         <div className="container mx-auto px-4">
@@ -122,8 +163,8 @@ export default function StaffPage() {
               {t('staff.directory')}
             </h1>
             <p className="text-xl text-text-secondary max-w-2xl mx-auto">
-              {language === 'ms' 
-                ? `Bertemu dengan ${staff.length} guru dan kakitangan berdedikasi kami` 
+              {language === 'ms'
+                ? `Bertemu dengan ${staff.length} guru dan kakitangan berdedikasi kami`
                 : `Meet our ${staff.length} dedicated teachers and staff members`}
             </p>
             <div className="mt-4 flex justify-center space-x-4">
@@ -166,7 +207,7 @@ export default function StaffPage() {
                 >
                   {departments.map(dept => (
                     <option key={dept} value={dept}>
-                      {dept === 'all' 
+                      {dept === 'all'
                         ? t('staff.all')
                         : departmentTranslations[language as 'en' | 'ms'][dept as keyof typeof departmentTranslations.en] || dept
                       }
@@ -178,7 +219,7 @@ export default function StaffPage() {
 
             {/* Results Count */}
             <div className="mt-4 text-sm text-text-secondary">
-              {filteredStaff.length === staff.length 
+              {filteredStaff.length === staff.length
                 ? `Showing all ${staff.length} staff members`
                 : `Showing ${filteredStaff.length} of ${staff.length} staff members`
               }
@@ -198,14 +239,14 @@ export default function StaffPage() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
-              {filteredStaff.map((staff, index) => (
+              {filteredStaff.map((s, index) => (
                 <motion.div
-                  key={staff.id}
+                  key={s.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <StaffCard staff={staff} />
+                  <StaffCard staff={s} />
                 </motion.div>
               ))}
             </motion.div>
@@ -220,8 +261,8 @@ export default function StaffPage() {
             >
               <GlassCard>
                 <p className="text-text-secondary text-lg">
-                  {language === 'ms' 
-                    ? 'Tiada staf ditemui. Cuba ubah carian atau penapis anda.' 
+                  {language === 'ms'
+                    ? 'Tiada staf ditemui. Cuba ubah carian atau penapis anda.'
                     : 'No staff members found. Try adjusting your search or filters.'}
                 </p>
               </GlassCard>
