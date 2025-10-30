@@ -11,14 +11,20 @@ export default async function StaffPage({ params }: { params: { lang: string } }
 
   const raw = await getStaffData();
 
+  // ✅ Helper to normalize departments
+  const normalizeDepartments = (value?: string | string[]) => {
+    if (!value) return "";
+    return Array.isArray(value) ? value.join(" | ") : value;
+  };
+
   const staff = raw.map((s) => ({
     teacher_id: s.teacher_id ?? s.id ?? undefined,
     id: s.id,
-    name: s.name ?? "Unknown",
-    role: s.role ?? "",
+    name: s.name ?? s.name_en ?? "Unknown",
+    role: s.role ?? s.role_en ?? "",
     role_level: s.role_level ? Number(s.role_level) : 4,
-    departments: s.departments ?? "",
-    photo: s.photo ?? "",
+    departments: normalizeDepartments(s.departments),
+    photo: s.photo ?? s.photo_url ?? "",
     bio_en: s.bio_en ?? "",
     bio_ms: s.bio_ms ?? "",
   }));
@@ -29,6 +35,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
   const teachers = staff.filter((s) => s.role_level === 4);
   const support = staff.filter((s) => s.role_level === 5);
 
+  // Build department map (include HODs and teachers)
   const deptMap = new Map<string, typeof staff>();
   const addToDept = (member: any) => {
     if (!member.departments) return;
@@ -104,7 +111,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
             ))}
         </section>
 
-        {/* General Teachers + Support Staff */}
+        {/* Teachers + Support Staff */}
         <section id="support">
           {teachers.filter((t) => !t.departments).length > 0 && (
             <StaffSection
