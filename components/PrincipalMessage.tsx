@@ -4,49 +4,49 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-export default function PrincipalMessage({
-  t,
-  lang = "en",
-  imageSrc = "/images/staff/headmaster.jpg",
-}: {
-  t: any;
-  lang?: string;
-  imageSrc?: string;
-}) {
+export default function PrincipalMessage({ t, lang }: { t: any; lang: string }) {
+  const message =
+    lang === "ms"
+      ? t?.principal_message_ms ??
+        "Sebagai warga SK Bebuloh, kami berpegang kepada nilai kesepaduan dan kecemerlangan dalam mendidik anak bangsa."
+      : t?.principal_message_en ??
+        "As part of SK Bebuloh, we uphold unity and excellence in shaping young minds for a brighter future.";
+
   return (
-    <section className="container mx-auto px-4 py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-3 items-center gap-10 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-6"
-      >
-        <div className="flex justify-center">
-          <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-lg">
+    <section className="py-20 bg-white">
+      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-8">
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          className="flex-shrink-0"
+        >
+          <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg mx-auto md:mx-0">
             <Image
-              src={imageSrc}
-              alt="Headmaster"
-              fill
+              src="/images/staff/teacher-headmaster.jpg"
+              alt="Principal"
+              width={192}
+              height={192}
               style={{ objectFit: "cover" }}
             />
           </div>
-        </div>
-        <div className="md:col-span-2">
-          <h3 className="text-2xl font-bold text-slate-900 mb-3">
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          className="flex-1 text-center md:text-left"
+        >
+          <h2 className="text-2xl font-bold text-orange-700 mb-3">
             {lang === "ms" ? "Ucapan Guru Besar" : "Principal’s Message"}
-          </h3>
-          <p className="text-slate-700 leading-relaxed">
-            {t.principal_message ??
-              (lang === "ms"
-                ? "Kami berusaha membentuk murid yang cemerlang dari segi akademik, sahsiah dan kemahiran insaniah."
-                : "We strive to nurture students who excel academically and embody noble character.")}
+          </h2>
+          <p className="text-slate-700 leading-relaxed">{message}</p>
+          <p className="mt-3 font-semibold text-slate-900">
+            {lang === "ms" ? "Guru Besar" : "Headmaster"} — {t?.principal_name ?? "Pn. [Name]"}
           </p>
-          <p className="mt-4 font-semibold text-orange-600">
-            {t.headmaster_name ?? "Guru Besar"}
-          </p>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </section>
   );
 }
