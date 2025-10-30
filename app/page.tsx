@@ -1,11 +1,6 @@
 // app/page.tsx
-import HeroWithStaffImage from "@/components/HeroWithStaffImage";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
-  return (
-    <main>
-      {/* English default homepage */}
-      <HeroWithStaffImage lang="en" />
-    </main>
-  );
+export default function Page() {
+  redirect("/en");
 }
