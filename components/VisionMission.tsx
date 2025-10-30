@@ -4,46 +4,50 @@
 import { motion } from "framer-motion";
 import { Eye, Target } from "lucide-react";
 
-export default function VisionMission({ t }: { t: any }) {
-  return (
-    <section className="container mx-auto px-4 py-20">
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
-      >
-        <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md shadow">
-          <div className="flex items-center gap-2 mb-3 text-orange-600">
-            <Eye className="w-6 h-6" />
-            <h3 className="text-xl font-bold">
-              {t.lang === "ms" ? "Visi" : "Vision"}
-            </h3>
-          </div>
-          <p className="text-slate-700 leading-relaxed">
-            {t.vision ??
-              (t.lang === "ms"
-                ? "Menjadi sekolah unggul dalam semua aspek pendidikan."
-                : "To be an excellent school in all aspects of education.")}
-          </p>
-        </div>
+export default function VisionMission({ t, lang }: { t: any; lang: string }) {
+  const vision = lang === "ms" ? t?.vision_ms ?? "Menjana kecemerlangan pendidikan melalui perpaduan dan nilai." : t?.vision ?? "To cultivate excellence in education through unity and values.";
+  const mission = lang === "ms" ? t?.mission_ms ?? "Melahirkan pelajar berilmu dan berakhlak mulia melalui pengajaran berkualiti." : t?.mission ?? "To nurture knowledgeable and ethical students through quality teaching.";
 
-        <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md shadow">
-          <div className="flex items-center gap-2 mb-3 text-orange-600">
-            <Target className="w-6 h-6" />
-            <h3 className="text-xl font-bold">
-              {t.lang === "ms" ? "Misi" : "Mission"}
+  return (
+    <section className="py-16 bg-orange-50/50">
+      <div className="container mx-auto px-4">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-3xl font-bold text-orange-700 text-center mb-10"
+        >
+          {lang === "ms" ? "Visi & Misi" : "Vision & Mission"}
+        </motion.h2>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow"
+          >
+            <Eye className="w-10 h-10 text-orange-500 mb-3" />
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">
+              {lang === "ms" ? "Visi" : "Vision"}
             </h3>
-          </div>
-          <p className="text-slate-700 leading-relaxed">
-            {t.mission ??
-              (t.lang === "ms"
-                ? "Melahirkan murid berilmu, berakhlak mulia dan berdaya saing."
-                : "To nurture knowledgeable, virtuous and competitive students.")}
-          </p>
+            <p className="text-slate-700">{vision}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow"
+          >
+            <Target className="w-10 h-10 text-orange-500 mb-3" />
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">
+              {lang === "ms" ? "Misi" : "Mission"}
+            </h3>
+            <p className="text-slate-700">{mission}</p>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
