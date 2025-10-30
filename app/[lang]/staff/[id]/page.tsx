@@ -1,126 +1,69 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+// app/[lang]/staff/[id]/page.tsx
+import { notFound } from "next/navigation";
 import Image from "next/image";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import GlassCard from "@/components/GlassCard";
-import { StaffMember } from "@/types";
+import { getStaffById } from "@/lib/fetchers";
 
-export default function StaffProfilePage() {
-  const params = useParams();
-  const id = params?.id ? String(params.id) : "";
+export default async function StaffProfilePage({ params }: { params: { lang: string; id: string } }) {
+  const { id, lang } = params;
+  const raw = await getStaffById(id);
 
-  const [staff, setStaff] = useState<StaffMember | null>(null);
-  const [language, setLanguage] = useState<"en" | "ms">("en");
-
-  // ✅ Fetch staff data only when id exists
-  useEffect(() => {
-    if (!id) return;
-
-    async function fetchStaff() {
-      try {
-        const response = await fetch("/data/staff-data.json");
-        const data: StaffMember[] = await response.json();
-        const matched = data.find((s) => s.id === id);
-        setStaff(matched || null);
-      } catch (error) {
-        console.error("Error fetching staff data:", error);
-      }
-    }
-
-    fetchStaff();
-  }, [id]);
-
-  // ✅ Early return if staff not found
-  if (!staff) {
-    return (
-      <main className="min-h-screen bg-pastel-bg">
-        <Navbar />
-        <div className="container mx-auto px-4 py-32 text-center">
-          <GlassCard>
-            <h2 className="font-montserrat font-bold text-2xl">Staff not found</h2>
-            <p className="text-text-secondary mt-2">
-              The staff profile you are looking for could not be found.
-            </p>
-          </GlassCard>
-        </div>
-        <Footer />
-      </main>
-    );
+  if (!raw) {
+    notFound();
   }
 
-  const isMalay = language === "ms";
+  const staff = {
+    id: raw.teacher_id ?? raw.id ?? id,
+    name: raw.name ?? "Unknown",
+    role: raw.role ?? "",
+    departments: raw.departments ?? "",
+    photo: raw.photo ?? "",
+    bio_en: raw.bio_en ?? "",
+    bio_ms: raw.bio_ms ?? "",
+  };
 
-  // ✅ Normal return (staff found)
+  const photoSrc = staff.photo
+    ? staff.photo.startsWith("http")
+      ? staff.photo
+      : staff.photo.startsWith("/images")
+      ? staff.photo
+      : `/images/staff/${staff.photo}`
+    : null;
+
+  // department banner color by simple mapping (you can expand)
+  const deptColor = (d?: string) => {
+    if (!d) return "bg-orange-50";
+    const key = d.toLowerCase();
+    if (key.includes("bahasa")) return "bg-amber-50";
+    if (key.includes("math") || key.includes("matem")) return "bg-indigo-50";
+    if (key.includes("science") || key.includes("sains")) return "bg-green-50";
+    return "bg-slate-50";
+  };
+
   return (
-    <main className="min-h-screen bg-pastel-bg">
-      <Navbar />
-      <div className="container mx-auto px-4 py-20">
-        <div className="max-w-3xl mx-auto">
-          <GlassCard className="p-8">
-            <div className="flex flex-col items-center text-center gap-6">
-              {/* Profile Photo */}
-              <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-glass-border shadow-lg">
-                {staff.photo_url ? (
-                  <Image
-                    src={staff.photo_url}
-                    alt={isMalay ? staff.name_ms || staff.name_en : staff.name_en}
-                    width={160}
-                    height={160}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary to-accent-red flex items-center justify-center text-white text-3xl">
-                    {staff.name_en
-                      .split(" ")
-                      .map((n) => n[0])
-                      .slice(0, 2)
-                      .join("")}
-                  </div>
-                )}
-              </div>
+    <main className="container mx-auto px-4 py-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1 flex flex-col items-center">
+          <div className="w-44 h-44 rounded-full overflow-hidden bg-slate-100 mb-4">
+            {photoSrc ? <Image src={photoSrc} alt={staff.name} width={176} height={176} style={{ objectFit: "cover" }} /> : <div className="flex items-center justify-center h-full text-2xl text-slate-600">{staff.name?.split(" ").map(n => n[0]).join("")}</div>}
+          </div>
 
-              {/* Name & Role */}
-              <div>
-                <h1 className="font-montserrat font-bold text-3xl text-text-primary">
-                  {isMalay ? staff.name_ms : staff.name_en}
-                </h1>
-                <p className="text-primary font-semibold mt-2">
-                  {isMalay ? staff.role_ms || staff.role_en : staff.role_en}
-                </p>
-                <p className="text-text-secondary mt-1">
-                  {isMalay ? staff.department_ms : staff.department_en}
-                </p>
-              </div>
+          <h2 className="text-xl font-semibold text-slate-900">{staff.name}</h2>
+          <p className="text-sm text-slate-600 mt-1">{staff.role}</p>
+          {staff.departments && <p className="text-xs text-slate-500 mt-2">{staff.departments.replace(/\|/g, ", ")}</p>}
+        </div>
 
-              {/* Traits */}
-              {Array.isArray(staff.traits) && staff.traits.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-2">
-                  {staff.traits.map((t, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
+        <div className="md:col-span-2">
+          <div className={`${deptColor(staff.departments)} rounded-xl p-4 mb-6`}>
+            <h3 className="text-lg font-semibold mb-1">{staff.departments || (lang === "ms" ? "Tiada Panitia" : "No Department")}</h3>
+            <p className="text-sm text-slate-700">{lang === "ms" ? "Profil kakitangan" : "Staff profile"}</p>
+          </div>
 
-              {/* Bio */}
-              <div className="w-full text-left mt-4">
-                <h3 className="font-montserrat font-semibold text-lg mb-2">Bio</h3>
-                <p className="text-text-secondary leading-relaxed">
-                  {isMalay ? staff.bio_ms || staff.bio_en : staff.bio_en}
-                </p>
-              </div>
-            </div>
-          </GlassCard>
+          <h3 className="text-lg font-semibold mb-3">{lang === "ms" ? "Biografi" : "Biography"}</h3>
+          <div className="prose max-w-none text-slate-700">
+            <p>{lang === "ms" ? (staff.bio_ms || staff.bio_en) : (staff.bio_en || staff.bio_ms)}</p>
+          </div>
         </div>
       </div>
-      <Footer />
     </main>
   );
 }
