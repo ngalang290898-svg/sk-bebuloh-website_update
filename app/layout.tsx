@@ -1,34 +1,23 @@
-import './globals.css'
-import { Inter, Montserrat } from 'next/font/google'
-import { LanguageProvider } from '@/lib/i18n'
+// app/layout.tsx
+import "./globals.css";
+import Navbar from "@/components/Navbar";
+import { Inter, Montserrat } from "next/font/google";
 
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
-})
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-})
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
 
 export const metadata = {
-  title: 'SK Bebuloh Labuan - Sekolah Kebangsaan Bebuloh Labuan',
-  description: 'Official website of SK Bebuloh Labuan - Laman web rasmi SK Bebuloh Labuan',
-}
+  title: "SK Bebuloh Labuan",
+  description: "Official website of Sekolah Kebangsaan Bebuloh Labuan",
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
-      <body className="font-inter bg-pastel-bg min-h-screen">
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+      <body className="bg-[#fffaf8] text-slate-800 antialiased">
+        <Navbar />
+        <div className="pt-14">{children}</div>
       </body>
     </html>
-  )
+  );
 }
