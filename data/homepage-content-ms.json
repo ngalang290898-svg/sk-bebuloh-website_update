@@ -3,14 +3,38 @@
   "school_name": "Sekolah Kebangsaan Bebuloh Labuan",
   "school_code": "WBA1001",
   "motto": "Superbia, Unitas, Triumphus",
-  "about_title": "Tentang Sekolah",
-  "about_description": "Sekolah Kebangsaan Bebuloh merupakan institusi pendidikan rendah di WP Labuan yang berkomitmen melahirkan generasi cemerlang melalui pembelajaran holistik dan berteraskan nilai.",
-  "principal_name": "Encik Maidan Dali @ Sumardi Bin Yusoff",
-  "principal_photo": "/images/staff/teacher-headmaster.jpg",
-  "principal_message_ms": "Sebagai warga SK Bebuloh, kami berpegang kepada nilai kesepaduan dan kecemerlangan dalam mendidik anak bangsa.",
-  "vision_ms": "Menjana kecemerlangan pendidikan melalui perpaduan dan nilai.",
-  "mission_ms": "Melahirkan pelajar berilmu dan berakhlak mulia melalui pengajaran berkualiti.",
-  "contact_address": "SK Bebuloh, WP Labuan, Malaysia",
-  "contact_phone": "+60 87-465220",
-  "contact_email": "skbebuloh@moe.edu.my"
+
+  "about": {
+    "title": "Tentang Sekolah",
+    "description": "Sekolah Kebangsaan Bebuloh merupakan institusi pendidikan rendah di WP Labuan yang berkomitmen melahirkan generasi cemerlang melalui pembelajaran holistik dan berteraskan nilai."
+  },
+
+  "principal": {
+    "name": "Encik Maidan Dali @ Sumardi Bin Yusoff",
+    "photo": "/images/staff/headmaster.jpg",
+    "message": "Sebagai warga SK Bebuloh, kami berpegang kepada nilai kesepaduan dan kecemerlangan dalam mendidik anak bangsa."
+  },
+
+  "vision": {
+    "title": "Visi",
+    "text": "Menjana kecemerlangan pendidikan melalui perpaduan dan nilai."
+  },
+
+  "mission": {
+    "title": "Misi",
+    "text": "Melahirkan pelajar berilmu dan berakhlak mulia melalui pengajaran berkualiti."
+  },
+
+  "contact": {
+    "title": "Hubungi Kami",
+    "address": "SK Bebuloh, WP Labuan, Malaysia",
+    "phone": "+60 87-465220",
+    "email": "skbebuloh@moe.edu.my"
+  },
+
+  "cta": {
+    "meet_staff": "Kakitangan",
+    "learn_more": "Tentang",
+    "scroll_cta": "Kenali pasukan kami"
+  }
 }
