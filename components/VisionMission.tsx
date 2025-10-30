@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import { Eye, Target } from "lucide-react";
 
 export default function VisionMission({ t, lang }: { t: any; lang: string }) {
-  const vision = lang === "ms" ? t?.vision_ms ?? "Menjana kecemerlangan pendidikan melalui perpaduan dan nilai." : t?.vision ?? "To cultivate excellence in education through unity and values.";
-  const mission = lang === "ms" ? t?.mission_ms ?? "Melahirkan pelajar berilmu dan berakhlak mulia melalui pengajaran berkualiti." : t?.mission ?? "To nurture knowledgeable and ethical students through quality teaching.";
+  const vision = t.vision?.text ?? "";
+  const mission = t.mission?.text ?? "";
 
   return (
     <section className="py-16 bg-orange-50/50">
@@ -21,6 +21,7 @@ export default function VisionMission({ t, lang }: { t: any; lang: string }) {
         </motion.h2>
 
         <div className="grid md:grid-cols-2 gap-8">
+          {/* Vision */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -29,11 +30,12 @@ export default function VisionMission({ t, lang }: { t: any; lang: string }) {
           >
             <Eye className="w-10 h-10 text-orange-500 mb-3" />
             <h3 className="text-xl font-semibold text-slate-900 mb-2">
-              {lang === "ms" ? "Visi" : "Vision"}
+              {t.vision?.title ?? (lang === "ms" ? "Visi" : "Vision")}
             </h3>
-            <p className="text-slate-700">{vision}</p>
+            <p className="text-slate-700 leading-relaxed">{vision}</p>
           </motion.div>
 
+          {/* Mission */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -42,9 +44,9 @@ export default function VisionMission({ t, lang }: { t: any; lang: string }) {
           >
             <Target className="w-10 h-10 text-orange-500 mb-3" />
             <h3 className="text-xl font-semibold text-slate-900 mb-2">
-              {lang === "ms" ? "Misi" : "Mission"}
+              {t.mission?.title ?? (lang === "ms" ? "Misi" : "Mission")}
             </h3>
-            <p className="text-slate-700">{mission}</p>
+            <p className="text-slate-700 leading-relaxed">{mission}</p>
           </motion.div>
         </div>
       </div>
