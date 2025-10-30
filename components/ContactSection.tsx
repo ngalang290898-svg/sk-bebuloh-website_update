@@ -21,15 +21,15 @@ export default function ContactSection({ t, lang }: { t: any; lang: string }) {
           <div className="space-y-4 text-slate-700">
             <p className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-orange-500" />
-              SK Bebuloh, WP Labuan, Malaysia
+              {t?.contact_address}
             </p>
             <p className="flex items-center gap-2">
               <Phone className="w-5 h-5 text-orange-500" />
-              +60 87-XXXXXX
+              {t?.contact_phone}
             </p>
             <p className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-orange-500" />
-              skbebuloh@moe.edu.my
+              {t?.contact_email}
             </p>
           </div>
 
