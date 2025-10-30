@@ -2,7 +2,6 @@
 import StaffSection from "@/components/StaffSection";
 import JumpNav from "@/components/JumpNav";
 import { getStaffData } from "@/lib/fetchers";
-import useLocaleContent from "@/lib/i18n";
 
 export default async function StaffPage({ params }: { params: { lang: string } }) {
   const lang = params.lang || "en";
@@ -39,40 +38,91 @@ export default async function StaffPage({ params }: { params: { lang: string } }
   };
   [...hods, ...teachers].forEach(addToDept);
 
-  // localization
-  const t = useLocaleContent(lang);
+  // ✅ FIX: Server-safe translation import (no React hook)
+  const t = (await import(`@/data/homepage-content-${lang}.json`)).default;
 
   return (
     <main className="min-h-screen bg-[transparent]">
+      {/* Sticky Jump-to-section navigation */}
       <JumpNav lang={lang} />
+
       <div className="container mx-auto px-4 py-10">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">{t?.staff_page_title ?? (lang === "ms" ? "Kakitangan Kami" : "Our Staff")}</h1>
-          <p className="text-slate-600 mt-2">{t?.staff_page_description ?? (lang === "ms" ? "Kenali pasukan di belakang SK Bebuloh." : "Meet the team behind SK Bebuloh.")}</p>
+          <h1 className="text-3xl font-bold text-slate-800">
+            {t?.staff_page_title ?? (lang === "ms" ? "Kakitangan Kami" : "Our Staff")}
+          </h1>
+          <p className="text-slate-600 mt-2">
+            {t?.staff_page_description ??
+              (lang === "ms"
+                ? "Kenali pasukan di belakang SK Bebuloh."
+                : "Meet the team behind SK Bebuloh.")}
+          </p>
         </header>
 
+        {/* Headmaster Section */}
         <section id="headmaster">
-          {headmaster.length > 0 && <StaffSection title={lang === "ms" ? "Guru Besar" : "Headmaster"} staffList={headmaster} layout="hero" lang={lang} icon="shield" />}
+          {headmaster.length > 0 && (
+            <StaffSection
+              title={lang === "ms" ? "Guru Besar" : "Headmaster"}
+              staffList={headmaster}
+              layout="hero"
+              lang={lang}
+              icon="shield"
+            />
+          )}
         </section>
 
+        {/* Administrative Assistants Section */}
         <section id="admins">
-          {admins.length > 0 && <StaffSection title={lang === "ms" ? "Pembantu Tadbir" : "Administrative Assistants"} staffList={admins} layout="grid" lang={lang} icon="users" />}
+          {admins.length > 0 && (
+            <StaffSection
+              title={lang === "ms" ? "Pembantu Tadbir" : "Administrative Assistants"}
+              staffList={admins}
+              layout="grid"
+              lang={lang}
+              icon="users"
+            />
+          )}
         </section>
 
+        {/* Departments Section */}
         <section id="departments">
-          {Array.from(deptMap.keys()).sort().map((dept) => (
-            <div key={dept}>
-              <StaffSection title={dept} staffList={deptMap.get(dept) ?? []} layout="grid" lang={lang} icon="book" />
-            </div>
-          ))}
+          {Array.from(deptMap.keys())
+            .sort()
+            .map((dept) => (
+              <div key={dept}>
+                <StaffSection
+                  title={dept}
+                  staffList={deptMap.get(dept) ?? []}
+                  layout="grid"
+                  lang={lang}
+                  icon="book"
+                />
+              </div>
+            ))}
         </section>
 
+        {/* Teachers without departments + Support Staff */}
         <section id="support">
           {teachers.filter((t) => !t.departments).length > 0 && (
-            <StaffSection title={lang === "ms" ? "Guru" : "Teachers"} staffList={teachers.filter((t) => !t.departments)} layout="grid" lang={lang} icon="book" />
+            <StaffSection
+              title={lang === "ms" ? "Guru" : "Teachers"}
+              staffList={teachers.filter((t) => !t.departments)}
+              layout="grid"
+              lang={lang}
+              icon="book"
+            />
           )}
 
-          {support.length > 0 && <StaffSection title={lang === "ms" ? "Kakitangan Sokongan" : "Support Staff"} staffList={support} layout="grid" lang={lang} icon="users" />}
+          {support.length > 0 && (
+            <StaffSection
+              title={lang === "ms" ? "Kakitangan Sokongan" : "Support Staff"}
+              staffList={support}
+              layout="grid"
+              lang={lang}
+              icon="users"
+            />
+          )}
         </section>
       </div>
     </main>
