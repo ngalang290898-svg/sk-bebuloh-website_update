@@ -1,103 +1,65 @@
+// components/Navbar.tsx
 "use client";
 
 import Link from "next/link";
-import { useLanguage } from "@/lib/i18n";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { Globe } from "lucide-react";
 
-export default function Navbar() {
-  const { language, t, setLanguage } = useLanguage();
+const navItems = [
+  { key: "home", en: "Home", ms: "Laman Utama", href: "/" },
+  { key: "staff", en: "Staff", ms: "Kakitangan", href: "/staff" },
+  { key: "about", en: "About", ms: "Tentang Sekolah", href: "/about" },
+  { key: "contact", en: "Contact", ms: "Hubungi", href: "/contact" },
+  { key: "rewards", en: "Rewards", ms: "Ganjaran", href: "/rewards" },
+];
+
+export default function Navbar({ lang = "en" }: { lang?: string }) {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
 
-  // nav links - keep rewards removed for now (we will add only when you want)
-  const navLinks = [
-    { href: "", label: t("nav.home") },
-    { href: "about", label: t("nav.about") },
-    { href: "staff", label: t("nav.staff") }
-  ];
-
-  const setToEnglish = () => setLanguage("en");
-  const setToMalay = () => setLanguage("ms");
+  const switchLanguage = () => {
+    const newLang = lang === "en" ? "ms" : "en";
+    const segments = pathname.split("/");
+    segments[1] = newLang;
+    router.push(segments.join("/") || "/");
+  };
 
   return (
-    <nav className="w-full fixed top-0 left-0 z-50 bg-white/40 backdrop-blur-lg border-b border-glass-border">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href={`/${language}`} className="font-montserrat font-bold text-xl text-primary">
+    <nav className="fixed top-0 left-0 w-full bg-white/70 backdrop-blur-md border-b border-orange-100 z-50 shadow-sm">
+      <div className="container mx-auto px-4 flex items-center justify-between h-14">
+        <Link href={`/${lang}`} className="text-orange-600 font-bold text-lg">
           SK BEBULOH
         </Link>
 
-        <div className="hidden md:flex gap-6">
-          {navLinks.map((link, idx) => (
-            <Link
-              key={idx}
-              href={`/${language}/${link.href}`}
-              className={`text-text-primary hover:text-primary transition ${
-                pathname.endsWith(link.href) ? "text-primary font-semibold" : ""
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Language Buttons (side-by-side) */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={setToEnglish}
-            aria-label="Switch to English"
-            className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "en" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
-          >
-            EN
-          </button>
-          <button
-            onClick={setToMalay}
-            aria-label="Switch to Bahasa Malaysia"
-            className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "ms" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
-          >
-            BM
-          </button>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden text-primary ml-2"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-white/80 backdrop-blur-lg px-6 py-4 flex flex-col gap-3">
-          {navLinks.map((link, idx) => (
-            <Link
-              key={idx}
-              href={`/${language}/${link.href}`}
-              className="text-text-primary font-medium"
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
-
-          <div className="flex gap-2 mt-2">
-            <button
-              onClick={() => { setLanguage("en"); setMenuOpen(false); }}
-              className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "en" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => { setLanguage("ms"); setMenuOpen(false); }}
-              className={`px-3 py-1 rounded-full font-semibold text-sm ${language === "ms" ? "bg-primary text-white" : "bg-white/50 text-primary border border-glass-border"}`}
-            >
-              BM
-            </button>
+        <div className="flex items-center gap-5">
+          <div className="hidden sm:flex gap-5">
+            {navItems.map((item) => (
+              <Link
+                key={item.key}
+                href={`/${lang}${item.href === "/" ? "" : item.href}`}
+                className={`text-sm font-medium hover:text-orange-600 ${
+                  pathname.includes(item.href) && item.href !== "/"
+                    ? "text-orange-600"
+                    : "text-slate-700"
+                }`}
+              >
+                {lang === "ms" ? item.ms : item.en}
+              </Link>
+            ))}
           </div>
+
+          {/* Language Toggle */}
+          <button
+            onClick={switchLanguage}
+            className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-orange-600 transition"
+          >
+            <Globe className="w-4 h-4" />
+            {lang.toUpperCase()}
+          </button>
         </div>
-      )}
+      </div>
     </nav>
   );
 }
