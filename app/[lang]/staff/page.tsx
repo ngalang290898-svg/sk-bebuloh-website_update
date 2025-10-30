@@ -4,9 +4,16 @@ import JumpNav from "@/components/JumpNav";
 import { getStaffData } from "@/lib/fetchers";
 
 export default async function StaffPage({ params }: { params: { lang: string } }) {
+  // language param
   const lang = params.lang || "en";
+
+  // ✅ FIX: Load translation file directly (server-safe)
+  const t = (await import(`@/data/homepage-content-${lang}.json`)).default;
+
+  // Fetch staff data from OpenSheet / local fallback
   const raw = await getStaffData();
 
+  // Normalize staff fields
   const staff = raw.map((s) => ({
     teacher_id: s.teacher_id ?? s.id ?? undefined,
     id: s.id,
@@ -19,13 +26,14 @@ export default async function StaffPage({ params }: { params: { lang: string } }
     bio_ms: s.bio_ms ?? "",
   }));
 
+  // Group by hierarchy
   const headmaster = staff.filter((s) => s.role_level === 1);
   const admins = staff.filter((s) => s.role_level === 2);
   const hods = staff.filter((s) => s.role_level === 3);
   const teachers = staff.filter((s) => s.role_level === 4);
   const support = staff.filter((s) => s.role_level === 5);
 
-  // Build department map (include HODs and teachers)
+  // Department grouping
   const deptMap = new Map<string, typeof staff>();
   const addToDept = (member: any) => {
     if (!member.departments) return;
@@ -38,12 +46,9 @@ export default async function StaffPage({ params }: { params: { lang: string } }
   };
   [...hods, ...teachers].forEach(addToDept);
 
-  // ✅ FIX: Server-safe translation import (no React hook)
-  const t = (await import(`@/data/homepage-content-${lang}.json`)).default;
-
   return (
     <main className="min-h-screen bg-[transparent]">
-      {/* Sticky Jump-to-section navigation */}
+      {/* Sticky JumpNav under hero */}
       <JumpNav lang={lang} />
 
       <div className="container mx-auto px-4 py-10">
@@ -59,7 +64,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
           </p>
         </header>
 
-        {/* Headmaster Section */}
+        {/* Headmaster */}
         <section id="headmaster">
           {headmaster.length > 0 && (
             <StaffSection
@@ -72,7 +77,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
           )}
         </section>
 
-        {/* Administrative Assistants Section */}
+        {/* Administrative Assistants */}
         <section id="admins">
           {admins.length > 0 && (
             <StaffSection
@@ -85,7 +90,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
           )}
         </section>
 
-        {/* Departments Section */}
+        {/* Departments */}
         <section id="departments">
           {Array.from(deptMap.keys())
             .sort()
@@ -102,7 +107,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
             ))}
         </section>
 
-        {/* Teachers without departments + Support Staff */}
+        {/* General Teachers + Support Staff */}
         <section id="support">
           {teachers.filter((t) => !t.departments).length > 0 && (
             <StaffSection
