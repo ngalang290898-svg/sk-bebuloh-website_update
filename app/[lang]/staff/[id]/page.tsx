@@ -14,7 +14,6 @@ export default async function StaffProfilePage({
 
   const t = (await import(`@/data/homepage-content-${lang}.json`)).default;
 
-  // ✅ Always convert to string safely
   const toStringSafe = (value?: string | string[]) => {
     if (!value) return "";
     return Array.isArray(value) ? value.join(" | ") : value;
@@ -75,10 +74,10 @@ export default async function StaffProfilePage({
           <h2 className="text-xl font-semibold text-slate-900">{staff.name}</h2>
           <p className="text-sm text-slate-600 mt-1">{staff.role}</p>
 
-          {/* ✅ Safe display of departments */}
+          {/* ✅ Force cast to string before replace */}
           {staff.departments && (
             <p className="text-xs text-slate-500 mt-2">
-              {String(staff.departments).replace(/\|/g, ", ")}
+              {`${staff.departments}`.replace(/\|/g, ", ")}
             </p>
           )}
         </div>
