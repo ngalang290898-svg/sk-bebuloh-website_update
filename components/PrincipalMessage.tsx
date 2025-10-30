@@ -6,11 +6,7 @@ import { motion } from "framer-motion";
 
 export default function PrincipalMessage({ t, lang }: { t: any; lang: string }) {
   const message =
-    lang === "ms"
-      ? t?.principal_message_ms ??
-        "Sebagai warga SK Bebuloh, kami berpegang kepada nilai kesepaduan dan kecemerlangan dalam mendidik anak bangsa."
-      : t?.principal_message_en ??
-        "As part of SK Bebuloh, we uphold unity and excellence in shaping young minds for a brighter future.";
+    lang === "ms" ? t?.principal_message_ms : t?.principal_message_en;
 
   return (
     <section className="py-20 bg-white">
@@ -23,8 +19,8 @@ export default function PrincipalMessage({ t, lang }: { t: any; lang: string }) 
         >
           <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg mx-auto md:mx-0">
             <Image
-              src="/images/staff/teacher-headmaster.jpg"
-              alt="Principal"
+              src={t?.principal_photo ?? "/images/staff/placeholder.jpg"}
+              alt={t?.principal_name ?? "Principal"}
               width={192}
               height={192}
               style={{ objectFit: "cover" }}
@@ -43,7 +39,8 @@ export default function PrincipalMessage({ t, lang }: { t: any; lang: string }) 
           </h2>
           <p className="text-slate-700 leading-relaxed">{message}</p>
           <p className="mt-3 font-semibold text-slate-900">
-            {lang === "ms" ? "Guru Besar" : "Headmaster"} — {t?.principal_name ?? "Pn. [Name]"}
+            {lang === "ms" ? "Guru Besar" : "Headmaster"} —{" "}
+            {t?.principal_name ?? ""}
           </p>
         </motion.div>
       </div>
