@@ -1,28 +1,25 @@
 {
+  "lang": "en",
   "school_name": "Sekolah Kebangsaan Bebuloh Labuan",
-  "motto": "Superbia | Unitas | Triumphus",
-  "overview": "Sekolah Kebangsaan Bebuloh Labuan, established in 1965 with only one building and two classrooms, has grown into a vibrant primary school in the Federal Territory of Labuan. The school is deeply committed to nurturing holistic learners through academic excellence, creativity, and community values. SK Bebuloh proudly represents the Bambusa spirit — a symbol of unity, resilience, and triumph seen through teams like Bambusa RC, Bambusa Aerodance, Bambusa FC, and Bambusa HT that continue to bring pride at district and national levels.",
-  "vision": "To cultivate lifelong learners who strive for excellence through unity, creativity, and resilience.",
-  "mission": [
-    "Provide high-quality education that develops intellectual, spiritual, emotional, and physical balance in every child.",
-    "Foster an inclusive, innovative, and technology-enriched learning environment.",
-    "Empower pupils to become morally upright, confident, and globally minded citizens.",
-    "Strengthen partnerships between school, parents, and the community.",
-    "Promote co-curricular excellence through Bambusa spirit — teamwork, perseverance, and sportsmanship."
-  ],
-  "history": [
-    "1965 — School founded with one wooden building housing two classrooms.",
-    "1966 — Officially inaugurated by YB Datuk Haji Mohd. Yassin bin Haji Hashim.",
-    "2009 — Completion of a new modern school building with 12 classrooms under the Ninth Malaysia Plan.",
-    "2023 — Bambusa Aerodance crowned champions at the Tamu Gadang Aerodance Challenge, Labuan.",
-    "2025 — Launch of Dewan Bambusa, SK Bebuloh's new multipurpose open hall."
-  ],
-  "philosophy": "Education in Malaysia is an ongoing effort towards further developing the potential of individuals in a holistic and integrated manner to produce individuals who are intellectually, spiritually, emotionally and physically balanced, based on a firm belief in and devotion to God.",
-  "contact": {
-    "address": "Peti Surat 81332, 87023 W.P. Labuan, Wilayah Persekutuan Labuan",
-    "phone": "+6087-465220",
-    "fax": "+6087-464220",
-    "email": "wba1001@moe.edu.my",
-    "hours": "Monday to Friday, 7:00 AM – 5:00 PM"
-  }
+  "motto": "Superbia, Unitas, Triumphus",
+  "school_code": "WBA1001",
+  "meet_staff_cta": "Meet Our Team",
+  "learn_more": "About",
+  "scroll_cta": "Meet the team",
+  "staff_page_title": "Our Staff",
+  "staff_page_description": "Meet the dedicated educators and staff of SK Bebuloh Labuan.",
+  "headmaster": "Headmaster",
+  "administrativeAssistants": "Administrative Assistants",
+  "general_teachers": "Teachers",
+  "support_staff": "Support Staff",
+
+  "vision": "To cultivate excellence in education through unity, discipline, and respect.",
+  "mission": "To nurture responsible and creative students through holistic teaching approaches.",
+  "values": ["Integrity", "Respect", "Collaboration", "Innovation"],
+
+  "homepage_hero_title": "Welcome to SK Bebuloh Labuan",
+  "homepage_hero_subtitle": "Where pride, unity, and triumph meet every learner’s journey.",
+  "gallery_section_title": "School Activities",
+  "news_section_title": "Latest News",
+  "footer_message": "© 2025 Sekolah Kebangsaan Bebuloh Labuan. All rights reserved."
 }
