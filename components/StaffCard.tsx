@@ -1,111 +1,59 @@
-'use client';
+// components/StaffCard.tsx
+"use client";
 
-import { motion } from 'framer-motion';
-import { useLanguage } from '@/lib/i18n';
-import { StaffMember } from '@/lib/types';
-import { User, Award } from 'lucide-react';
-import Image from 'next/image';
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
-interface StaffCardProps {
-  staff: StaffMember;
+type Staff = {
+  teacher_id?: string;
+  id?: string;
+  name?: string;
+  role?: string;
+  role_level?: number;
+  departments?: string;
+  photo?: string;
+};
+
+function slugify(s?: string) {
+  if (!s) return "";
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-export default function StaffCard({ staff }: StaffCardProps) {
-  const { language, t } = useLanguage();
+export default function StaffCard({ staff, lang = "en", variant = "normal" }: { staff: Staff; lang?: string; variant?: "hero" | "normal" }) {
+  const imgSize = variant === "hero" ? 120 : 72;
+  const id = staff.teacher_id ?? staff.id ?? slugify(staff.name);
+  const photoSrc = staff.photo
+    ? staff.photo.startsWith("http")
+      ? staff.photo
+      : staff.photo.startsWith("/images")
+      ? staff.photo
+      : `/images/staff/${staff.photo}`
+    : undefined;
 
   return (
-    <motion.div
-      className="glass-card-hover group"
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      {/* Staff Photo */}
-      <div className="relative mb-4">
-        <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-glass-border group-hover:border-primary transition-colors">
-          {staff.photo_url ? (
-            <Image
-              src={staff.photo_url}
-              alt={language === 'ms' ? staff.name_ms : staff.name_en}
-              width={96}
-              height={96}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary to-accent-red flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
-            </div>
-          )}
-        </div>
-        
-        {/* HOD Badge */}
-        {staff.role_en?.includes('Head of Department') && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 bg-accent-yellow text-white rounded-full p-1"
-          >
-            <Award className="w-4 h-4" />
-          </motion.div>
-        )}
-      </div>
+    <motion.div whileHover={{ y: -6, scale: 1.02 }} transition={{ duration: 0.25 }} className={`bg-white/85 backdrop-blur-sm ${variant === "hero" ? "p-6 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.10)]" : "p-4 rounded-xl shadow-md"} text-center`}>
+      <Link href={`/${lang}/staff/${id}`}>
+        <div className="block">
+          <div className="flex flex-col items-center">
+            {photoSrc ? (
+              <div className={`relative overflow-hidden rounded-full mb-3`} style={{ width: imgSize, height: imgSize }}>
+                <Image src={photoSrc} alt={staff.name ?? "Staff photo"} width={imgSize} height={imgSize} style={{ objectFit: "cover" }} />
+              </div>
+            ) : (
+              <div className="flex items-center justify-center bg-orange-100 text-orange-700 rounded-full mb-3" style={{ width: imgSize, height: imgSize }}>
+                <span className="font-semibold">
+                  {staff.name?.split(" ").slice(0, 2).map((x) => x?.[0]).join("")}
+                </span>
+              </div>
+            )}
 
-      {/* Staff Info */}
-      <div className="text-center space-y-3">
-        <h3 className="font-montserrat font-bold text-lg text-text-primary group-hover:text-primary transition-colors">
-          {language === 'ms' ? staff.name_ms : staff.name_en}
-        </h3>
-        
-        <p className="text-primary font-semibold text-sm">
-          {language === 'ms' ? staff.role_ms : staff.role_en}
-        </p>
-
-        {/* Primary Department */}
-        <p className="text-text-secondary text-sm">
-          {language === 'ms' ? staff.department_ms : staff.department_en}
-        </p>
-
-        {/* Additional Departments */}
-        {staff.departments.length > 1 && (
-          <div className="text-xs text-text-secondary">
-            <span className="font-medium">
-              {language === 'ms' ? 'Juga dalam: ' : 'Also serves in: '}
-            </span>
-            {staff.departments.slice(1).map(dept => 
-              language === 'ms' 
-                ? staff.department_ms 
-                : staff.department_en
-            ).join(', ')}
+            <h3 className="font-semibold text-slate-900 text-sm">{staff.name}</h3>
+            <p className="text-xs text-slate-600">{staff.role}</p>
+            {staff.departments && <p className="text-[11px] text-slate-500 mt-1">{staff.departments.replace(/\|/g, ", ")}</p>}
           </div>
-        )}
-
-        {/* Traits */}
-        <div className="flex flex-wrap justify-center gap-1">
-          {staff.traits.map((trait, index) => (
-            <span
-              key={index}
-              className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
-            >
-              {trait}
-            </span>
-          ))}
         </div>
-
-        {/* Bio Preview */}
-        <p className="text-text-secondary text-sm line-clamp-2">
-          {language === 'ms' ? staff.bio_ms : staff.bio_en}
-        </p>
-
-        {/* Action Buttons */}
-        <div className="flex justify-center space-x-2 pt-2">
-          <motion.a
-            href={`/staff/${staff.id}`}
-            className="flex items-center space-x-1 text-primary text-sm font-semibold hover:underline"
-            whileHover={{ scale: 1.05 }}
-          >
-            <span>{t('staff.view_profile')}</span>
-          </motion.a>
-        </div>
-      </div>
+      </Link>
     </motion.div>
   );
 }
