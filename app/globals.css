@@ -64,3 +64,11 @@ a {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+/* Ensure navbar & floating button layers work correctly */
+body {
+  scroll-behavior: smooth;
+}
+
+.container {
+  max-width: 1200px;
+}
