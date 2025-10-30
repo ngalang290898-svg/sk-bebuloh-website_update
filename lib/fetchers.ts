@@ -3,12 +3,21 @@ export type RawStaff = {
   teacher_id?: string;
   id?: string;
   name?: string;
+  name_en?: string;
+  name_ms?: string;
+  gender?: string;
   role?: string;
+  role_en?: string;
+  role_ms?: string;
   role_level?: string | number;
-  departments?: string;
-  photo?: string;
+  departments?: string | string[];
+  department_en?: string;
+  department_ms?: string;
   bio_en?: string;
   bio_ms?: string;
+  traits?: string[];
+  photo?: string;
+  photo_url?: string;
 };
 
 export async function getStaffData(): Promise<RawStaff[]> {
@@ -24,9 +33,24 @@ export async function getStaffData(): Promise<RawStaff[]> {
     }
   }
 
+  // ✅ Local JSON fallback with flexible department type
   try {
     const local = (await import("@/data/staff-data.json")).default;
-    if (Array.isArray(local)) return local;
+    if (Array.isArray(local)) {
+      // Normalize departments array → string joined by "|"
+      const normalized = local.map((entry: any) => ({
+        ...entry,
+        departments: Array.isArray(entry.departments)
+          ? entry.departments.join(" | ")
+          : entry.departments,
+        photo: entry.photo || entry.photo_url || "",
+        role: entry.role || entry.role_en || "",
+        name: entry.name || entry.name_en || "",
+        bio_en: entry.bio_en || "",
+        bio_ms: entry.bio_ms || "",
+      }));
+      return normalized;
+    }
   } catch (err) {
     console.error("No staff data found locally", err);
   }
@@ -38,7 +62,8 @@ export async function getStaffById(id: string) {
   const all = await getStaffData();
   if (!all || all.length === 0) return null;
 
-  const slugify = (s?: string) => (s ? s.toString().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : "");
+  const slugify = (s?: string) =>
+    s ? s.toString().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : "";
 
   const found = all.find((r) => {
     const rid = (r.teacher_id ?? r.id ?? "").toString();
