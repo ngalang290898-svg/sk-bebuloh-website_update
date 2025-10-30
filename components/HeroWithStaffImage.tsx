@@ -15,7 +15,7 @@ export default function HeroWithStaffImage({
   imageSrc?: string;
   alt?: string;
 }) {
-  // ✅ Load translations directly from JSON
+  // ✅ Load translations directly from JSON (no hook)
   const t =
     lang === "ms"
       ? require("@/data/homepage-content-ms.json")
@@ -23,6 +23,7 @@ export default function HeroWithStaffImage({
 
   return (
     <section className="relative w-full overflow-hidden">
+      {/* Background image with gradient overlay */}
       <div className="absolute inset-0 -z-10">
         <motion.div
           initial={{ scale: 1.06, opacity: 0.98 }}
@@ -45,6 +46,7 @@ export default function HeroWithStaffImage({
         <div className="absolute inset-0 backdrop-blur-[2px]" />
       </div>
 
+      {/* Content */}
       <div className="relative container mx-auto px-4 py-24 lg:py-32">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -87,6 +89,7 @@ export default function HeroWithStaffImage({
         </motion.div>
       </div>
 
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
