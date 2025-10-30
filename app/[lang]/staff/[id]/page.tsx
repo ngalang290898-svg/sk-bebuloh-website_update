@@ -10,19 +10,24 @@ export default async function StaffProfilePage({
 }) {
   const { id, lang } = params;
 
-  // ✅ Fetch staff member by ID (teacher_id / id / slug fallback)
   const raw = await getStaffById(id);
   if (!raw) notFound();
 
-  // ✅ Load translation JSON (server-safe)
   const t = (await import(`@/data/homepage-content-${lang}.json`)).default;
+
+  // ✅ Normalize departments value (string | string[])
+  const normalizeDepartments = (dep?: string | string[]) => {
+    if (!dep) return "";
+    if (Array.isArray(dep)) return dep.join(" | ");
+    return dep;
+  };
 
   const staff = {
     id: raw.teacher_id ?? raw.id ?? id,
-    name: raw.name ?? "Unknown",
-    role: raw.role ?? "",
-    departments: raw.departments ?? "",
-    photo: raw.photo ?? "",
+    name: raw.name ?? raw.name_en ?? "Unknown",
+    role: raw.role ?? raw.role_en ?? "",
+    departments: normalizeDepartments(raw.departments),
+    photo: raw.photo ?? raw.photo_url ?? "",
     bio_en: raw.bio_en ?? "",
     bio_ms: raw.bio_ms ?? "",
   };
@@ -35,7 +40,6 @@ export default async function StaffProfilePage({
       : `/images/staff/${staff.photo}`
     : null;
 
-  // 🎨 Department-based pastel banner color logic
   const deptColor = (d?: string) => {
     if (!d) return "bg-orange-50";
     const key = d.toLowerCase();
@@ -48,7 +52,6 @@ export default async function StaffProfilePage({
 
   return (
     <main className="container mx-auto px-4 py-10">
-      {/* Layout: photo left (or top on mobile), bio right */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Profile Card */}
         <div className="md:col-span-1 flex flex-col items-center">
@@ -75,16 +78,17 @@ export default async function StaffProfilePage({
             {staff.name}
           </h2>
           <p className="text-sm text-slate-600 mt-1">{staff.role}</p>
+
+          {/* ✅ Safe display of departments */}
           {staff.departments && (
             <p className="text-xs text-slate-500 mt-2">
-              {staff.departments.replace(/\|/g, ", ")}
+              {String(staff.departments).replace(/\|/g, ", ")}
             </p>
           )}
         </div>
 
-        {/* Bio Section */}
+        {/* Biography */}
         <div className="md:col-span-2">
-          {/* Department Banner */}
           <div
             className={`${deptColor(
               staff.departments
@@ -103,7 +107,6 @@ export default async function StaffProfilePage({
             </p>
           </div>
 
-          {/* Biography Section */}
           <h3 className="text-lg font-semibold mb-3 text-orange-700">
             {lang === "ms" ? "Biografi" : "Biography"}
           </h3>
