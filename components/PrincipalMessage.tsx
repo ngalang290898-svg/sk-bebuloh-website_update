@@ -19,7 +19,7 @@ export default function PrincipalMessage({ t, lang }: { t: any; lang: string }) 
         >
           <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg mx-auto md:mx-0 bg-orange-50">
             <Image
-              src={p.photo ?? "/images/staff/headmaster.jpg"}
+              src={p.photo ?? "/images/headmaster.jpg"}
               alt={p.name ?? "Principal"}
               width={192}
               height={192}
