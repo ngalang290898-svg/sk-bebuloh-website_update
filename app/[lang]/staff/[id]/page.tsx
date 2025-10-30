@@ -9,24 +9,22 @@ export default async function StaffProfilePage({
   params: { lang: string; id: string };
 }) {
   const { id, lang } = params;
-
   const raw = await getStaffById(id);
   if (!raw) notFound();
 
   const t = (await import(`@/data/homepage-content-${lang}.json`)).default;
 
-  // ✅ Normalize departments value (string | string[])
-  const normalizeDepartments = (dep?: string | string[]) => {
-    if (!dep) return "";
-    if (Array.isArray(dep)) return dep.join(" | ");
-    return dep;
+  // ✅ Always convert to string safely
+  const toStringSafe = (value?: string | string[]) => {
+    if (!value) return "";
+    return Array.isArray(value) ? value.join(" | ") : value;
   };
 
   const staff = {
     id: raw.teacher_id ?? raw.id ?? id,
     name: raw.name ?? raw.name_en ?? "Unknown",
     role: raw.role ?? raw.role_en ?? "",
-    departments: normalizeDepartments(raw.departments),
+    departments: toStringSafe(raw.departments),
     photo: raw.photo ?? raw.photo_url ?? "",
     bio_en: raw.bio_en ?? "",
     bio_ms: raw.bio_ms ?? "",
@@ -74,9 +72,7 @@ export default async function StaffProfilePage({
             )}
           </div>
 
-          <h2 className="text-xl font-semibold text-slate-900">
-            {staff.name}
-          </h2>
+          <h2 className="text-xl font-semibold text-slate-900">{staff.name}</h2>
           <p className="text-sm text-slate-600 mt-1">{staff.role}</p>
 
           {/* ✅ Safe display of departments */}
