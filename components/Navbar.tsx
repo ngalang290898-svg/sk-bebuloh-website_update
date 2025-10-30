@@ -1,9 +1,8 @@
-// components/Navbar.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Globe } from "lucide-react";
 
 const navItems = [
@@ -11,19 +10,39 @@ const navItems = [
   { key: "staff", en: "Staff", ms: "Kakitangan", href: "/staff" },
   { key: "about", en: "About", ms: "Tentang Sekolah", href: "/about" },
   { key: "contact", en: "Contact", ms: "Hubungi", href: "/contact" },
-  { key: "rewards", en: "Rewards", ms: "Ganjaran", href: "/rewards" },
+  { key: "rewards", en: "Rewards", ms: "Ganjaran", href: "/rewards" }
 ];
 
-export default function Navbar({ lang = "en" }: { lang?: string }) {
-  const pathname = usePathname();
+export default function Navbar({ langProp }: { langProp?: string }) {
+  const pathname = usePathname() || "/";
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [lang, setLang] = useState<string>(() => {
+    // detect language from URL; fallback to prop or 'en'
+    const seg = pathname.split("/").filter(Boolean);
+    return seg[0] === "ms" ? "ms" : seg[0] === "en" ? "en" : langProp ?? "en";
+  });
+
+  useEffect(() => {
+    const seg = pathname.split("/").filter(Boolean);
+    const detected = seg[0] === "ms" ? "ms" : seg[0] === "en" ? "en" : langProp ?? "en";
+    setLang(detected);
+  }, [pathname, langProp]);
 
   const switchLanguage = () => {
     const newLang = lang === "en" ? "ms" : "en";
+    // preserve the rest of the path after language
     const segments = pathname.split("/");
-    segments[1] = newLang;
-    router.push(segments.join("/") || "/");
+    // segments[0] is empty string due to leading slash
+    // form new path: `/${newLang}${rest}`
+    const rest = segments.slice(2).join("/");
+    const newPath = rest ? `/${newLang}/${rest}` : `/${newLang}`;
+    router.push(newPath);
+  };
+
+  const buildHref = (href: string) => {
+    // href is like '/' or '/staff' or '/about'
+    if (href === "/") return `/${lang}`;
+    return `/${lang}${href}`;
   };
 
   return (
@@ -38,9 +57,9 @@ export default function Navbar({ lang = "en" }: { lang?: string }) {
             {navItems.map((item) => (
               <Link
                 key={item.key}
-                href={`/${lang}${item.href === "/" ? "" : item.href}`}
+                href={buildHref(item.href)}
                 className={`text-sm font-medium hover:text-orange-600 ${
-                  pathname.includes(item.href) && item.href !== "/"
+                  pathname.startsWith(`/${lang}${item.href === '/' ? '' : item.href}`)
                     ? "text-orange-600"
                     : "text-slate-700"
                 }`}
@@ -54,6 +73,7 @@ export default function Navbar({ lang = "en" }: { lang?: string }) {
           <button
             onClick={switchLanguage}
             className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-orange-600 transition"
+            aria-label="Toggle language"
           >
             <Globe className="w-4 h-4" />
             {lang.toUpperCase()}
