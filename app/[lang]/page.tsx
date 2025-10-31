@@ -8,16 +8,18 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 
 export default async function LangHomePage({ params }: { params: { lang: string } }) {
-  const { lang } = params;
+  let { lang } = params;
+
+  // ✅ Normalize 'bm' → 'ms'
+  if (lang === "bm") lang = "ms";
+
   const t = await getSchoolMetadata(lang);
 
   if (!t) {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <p className="text-slate-500">
-          {lang === "ms"
-            ? "Tidak dapat memuatkan data sekolah."
-            : "Failed to load school data."}
+          {lang === "ms" ? "Data sekolah tidak dijumpai." : "School data not found."}
         </p>
       </main>
     );
@@ -25,7 +27,7 @@ export default async function LangHomePage({ params }: { params: { lang: string 
 
   return (
     <main>
-      <HeroWithStaffImage lang={lang} />
+      <HeroWithStaffImage lang={lang} t={t} />
       <AboutSchool t={t} />
       <PrincipalMessage t={t} lang={lang} />
       <VisionMission t={t} lang={lang} />
