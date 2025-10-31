@@ -6,8 +6,8 @@ const nextConfig = {
     domains: [
       "drive.google.com",
       "lh3.googleusercontent.com",
-      "supabase.co",
-      "https://vrezurdhbhqfpriwafdu.supabase.co" // replace xyz with your real Supabase subdomain
+      // add your supabase domain:
+      "vrezurdhbhqfpriwafdu.supabase.co"
     ],
     formats: ["image/avif", "image/webp"]
   }
