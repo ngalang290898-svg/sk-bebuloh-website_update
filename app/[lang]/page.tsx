@@ -1,4 +1,5 @@
 // app/[lang]/page.tsx
+import { getSchoolMetadata } from "@/lib/fetchSupabaseData";
 import HeroWithStaffImage from "@/components/HeroWithStaffImage";
 import AboutSchool from "@/components/AboutSchool";
 import PrincipalMessage from "@/components/PrincipalMessage";
@@ -8,7 +9,19 @@ import Footer from "@/components/Footer";
 
 export default async function LangHomePage({ params }: { params: { lang: string } }) {
   const { lang } = params;
-  const t = (await import(`@/data/homepage-content-${lang}.json`)).default;
+  const t = await getSchoolMetadata(lang);
+
+  if (!t) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-slate-500">
+          {lang === "ms"
+            ? "Tidak dapat memuatkan data sekolah."
+            : "Failed to load school data."}
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main>
