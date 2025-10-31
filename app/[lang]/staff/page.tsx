@@ -4,29 +4,52 @@ import JumpNav from "@/components/JumpNav";
 import BackHomeButton from "@/components/BackHomeButton";
 import { getStaffData } from "@/lib/fetchSupabaseData";
 
-export default async function StaffPage({ params }: { params: { lang: string } }) {
+interface StaffRecord {
+  teacher_id: string;
+  id: string;
+  name_en?: string;
+  name_ms?: string;
+  role_en?: string;
+  role_ms?: string;
+  role_level?: number;
+  departments?: string[] | string | null;
+  photo_url?: string;
+  bio_en?: string;
+  bio_ms?: string;
+}
+
+export default async function StaffPage({
+  params,
+}: {
+  params: { lang: string };
+}) {
   const lang = params.lang === "bm" ? "ms" : params.lang || "en";
 
-  const raw = await getStaffData();
+  const raw: StaffRecord[] = await getStaffData();
   if (!raw || raw.length === 0) {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <p className="text-slate-500">
-          {lang === "ms" ? "Tiada data kakitangan ditemui." : "No staff data found."}
+          {lang === "ms"
+            ? "Tiada data kakitangan ditemui."
+            : "No staff data found."}
         </p>
       </main>
     );
   }
 
   // ✅ Normalize departments (string or array)
-  const staff = raw.map((s: any) => {
+  const staff = raw.map((s) => {
     let depts: string[] = [];
-    if (Array.isArray(s.departments)) depts = s.departments;
-    else if (typeof s.departments === "string")
-      depts = s.departments
+    if (Array.isArray(s.departments)) {
+      depts = s.departments.filter((d): d is string => !!d);
+    } else if (typeof s.departments === "string") {
+      const parts = s.departments
         .split("|")
-        .map((p: string) => p.trim()) // ✅ typed parameter
-        .filter(Boolean);
+        .map((p: string) => p.trim())
+        .filter((p: string) => p.length > 0);
+      depts = parts;
+    }
 
     return {
       teacher_id: s.teacher_id,
@@ -36,7 +59,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
       role_level: s.role_level ?? 4,
       departments: depts,
       photo: s.photo_url ?? "",
-      bio: lang === "ms" ? s.bio_ms ?? "" : s.bio_en ?? ""
+      bio: lang === "ms" ? s.bio_ms ?? "" : s.bio_en ?? "",
     };
   });
 
@@ -44,7 +67,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
   const headmaster = staff.filter((s) => s.role_level === 1);
   const admins = staff.filter((s) => s.role_level === 2);
   const hods = staff.filter((s) => s.role_level === 3);
-  const teachers = staff.filter((s) => s.role_level >= 4);
+  const teachers = staff.filter((s) => s.role_level && s.role_level >= 4);
   const support = staff.filter((s) => s.role_level === 5);
 
   // ✅ Build departments map
@@ -61,7 +84,8 @@ export default async function StaffPage({ params }: { params: { lang: string } }
   // ✅ Remove duplicates
   deptMap.forEach((list, key) => {
     const unique = list.filter(
-      (v, i, arr) => arr.findIndex((x) => x.teacher_id === v.teacher_id) === i
+      (v, i, arr) =>
+        arr.findIndex((x) => x.teacher_id === v.teacher_id) === i
     );
     deptMap.set(key, unique);
   });
@@ -94,7 +118,11 @@ export default async function StaffPage({ params }: { params: { lang: string } }
 
         {admins.length > 0 && (
           <StaffSection
-            title={lang === "ms" ? "Barisan Penolong Kanan" : "Administrative Assistants"}
+            title={
+              lang === "ms"
+                ? "Barisan Penolong Kanan"
+                : "Administrative Assistants"
+            }
             staffList={admins}
             layout="grid"
             lang={lang}
@@ -117,7 +145,9 @@ export default async function StaffPage({ params }: { params: { lang: string } }
 
         {support.length > 0 && (
           <StaffSection
-            title={lang === "ms" ? "Kakitangan Sokongan" : "Support Staff"}
+            title={
+              lang === "ms" ? "Kakitangan Sokongan" : "Support Staff"
+            }
             staffList={support}
             layout="grid"
             lang={lang}
