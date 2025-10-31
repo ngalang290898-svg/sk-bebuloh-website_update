@@ -18,6 +18,17 @@ interface StaffRecord {
   bio_ms?: string;
 }
 
+interface StaffMember {
+  teacher_id: string;
+  id: string;
+  name: string;
+  role: string;
+  bio?: string;
+  photo?: string;
+  departments?: string[];
+  role_level?: number;
+}
+
 export default async function StaffPage({
   params,
 }: {
@@ -39,7 +50,7 @@ export default async function StaffPage({
   }
 
   // ✅ Normalize departments (string or array)
-  const staff = raw.map((s) => {
+  const staff: StaffMember[] = raw.map((s) => {
     let depts: string[] = [];
     if (Array.isArray(s.departments)) {
       depts = s.departments.filter((d): d is string => !!d);
@@ -51,15 +62,21 @@ export default async function StaffPage({
       depts = parts;
     }
 
+    // ✅ Guarantee non-undefined name and role
+    const name =
+      (lang === "ms" ? s.name_ms ?? s.name_en : s.name_en ?? s.name_ms) || "Unknown";
+    const role =
+      (lang === "ms" ? s.role_ms ?? s.role_en : s.role_en ?? s.role_ms) || "Staff";
+
     return {
       teacher_id: s.teacher_id,
       id: s.id,
-      name: lang === "ms" ? s.name_ms ?? s.name_en : s.name_en,
-      role: lang === "ms" ? s.role_ms ?? s.role_en : s.role_en,
+      name,
+      role,
       role_level: s.role_level ?? 4,
       departments: depts,
       photo: s.photo_url ?? "",
-      bio: lang === "ms" ? s.bio_ms ?? "" : s.bio_en ?? "",
+      bio: (lang === "ms" ? s.bio_ms ?? "" : s.bio_en ?? "") ?? "",
     };
   });
 
@@ -71,7 +88,7 @@ export default async function StaffPage({
   const support = staff.filter((s) => s.role_level === 5);
 
   // ✅ Build departments map
-  const deptMap = new Map<string, typeof staff>();
+  const deptMap = new Map<string, StaffMember[]>();
   staff.forEach((member) => {
     if (member.departments && member.departments.length > 0) {
       member.departments.forEach((d: string) => {
