@@ -23,7 +23,10 @@ export default async function StaffPage({ params }: { params: { lang: string } }
     let depts: string[] = [];
     if (Array.isArray(s.departments)) depts = s.departments;
     else if (typeof s.departments === "string")
-      depts = s.departments.split("|").map((p) => p.trim()).filter(Boolean);
+      depts = s.departments
+        .split("|")
+        .map((p: string) => p.trim()) // ✅ typed parameter
+        .filter(Boolean);
 
     return {
       teacher_id: s.teacher_id,
@@ -48,7 +51,7 @@ export default async function StaffPage({ params }: { params: { lang: string } }
   const deptMap = new Map<string, typeof staff>();
   staff.forEach((member) => {
     if (member.departments && member.departments.length > 0) {
-      member.departments.forEach((d) => {
+      member.departments.forEach((d: string) => {
         if (!deptMap.has(d)) deptMap.set(d, []);
         deptMap.get(d)!.push(member);
       });
@@ -99,7 +102,6 @@ export default async function StaffPage({ params }: { params: { lang: string } }
           />
         )}
 
-        {/* ✅ Now departments will include all teachers */}
         {Array.from(deptMap.keys())
           .sort()
           .map((dept) => (
