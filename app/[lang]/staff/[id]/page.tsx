@@ -1,11 +1,26 @@
-// app/[lang]/staff/[id]/page.tsx
-import { getStaffById } from "@/lib/fetchSupabaseData";
+"use client";
+
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/Footer";
+import { getStaffById } from "@/lib/fetchSupabaseData";
 
-export default async function StaffProfile({
+interface StaffData {
+  teacher_id: string;
+  name_en?: string;
+  name_ms?: string;
+  role_en?: string;
+  role_ms?: string;
+  bio_en?: string;
+  bio_ms?: string;
+  photo_url?: string;
+  photo?: string;
+  departments?: string[] | string | null;
+}
+
+export default function StaffProfile({
   params,
 }: {
   params: { lang: string; id: string };
@@ -13,7 +28,30 @@ export default async function StaffProfile({
   const lang = params.lang === "bm" ? "ms" : params.lang || "en";
   const id = params.id;
 
-  const staff = await getStaffById(id);
+  const [staff, setStaff] = useState<StaffData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStaff() {
+      try {
+        const data = await getStaffById(id);
+        setStaff(data);
+      } catch (err) {
+        console.error("Error fetching staff:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStaff();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center text-slate-500">
+        {lang === "ms" ? "Memuatkan data..." : "Loading staff data..."}
+      </main>
+    );
+  }
 
   if (!staff) {
     return (
@@ -48,18 +86,16 @@ export default async function StaffProfile({
   return (
     <main className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       <section className="container mx-auto px-4 py-20">
-        {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="flex flex-col md:flex-row items-center md:items-start gap-10"
         >
-          {/* Staff Image */}
           <div className="relative w-52 h-52 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-lg bg-orange-50">
             <Image
               src={photo}
-              alt={name}
+              alt={name ?? "Staff photo"}
               fill
               sizes="(max-width: 768px) 100vw, 400px"
               style={{ objectFit: "cover" }}
@@ -67,7 +103,6 @@ export default async function StaffProfile({
             />
           </div>
 
-          {/* Staff Info */}
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl font-bold text-slate-900">{name}</h1>
             <p className="text-orange-700 font-medium mt-1">{role}</p>
@@ -87,7 +122,6 @@ export default async function StaffProfile({
           </div>
         </motion.div>
 
-        {/* Bio Section */}
         {bio && (
           <motion.div
             initial={{ opacity: 0 }}
