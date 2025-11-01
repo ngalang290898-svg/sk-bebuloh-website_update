@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { School } from "lucide-react";
-import useLocaleContent from "@/lib/i18n";
+// ✅ use named import (not default)
+import { useLocaleContent } from "@/lib/i18n";
 
 interface HeroProps {
   t?: any;
@@ -20,7 +21,10 @@ export default function HeroWithStaffImage({
   imageSrc = "/images/staff-group.jpg",
   alt = "Sekolah Kebangsaan Bebuloh Labuan Staff",
 }: HeroProps) {
-  const content = t ?? useLocaleContent?.() ?? {};
+  // ✅ Hooks must always run unconditionally
+  const localeContent = useLocaleContent?.();
+
+  const content = t ?? localeContent ?? {};
 
   const schoolName =
     content?.school_name ?? "Sekolah Kebangsaan Bebuloh Labuan";
@@ -52,7 +56,7 @@ export default function HeroWithStaffImage({
         <div className="absolute inset-0 backdrop-blur-[2px]" />
       </div>
 
-      {/* Hero content */}
+      {/* Hero Content */}
       <div className="relative container mx-auto px-4 py-24 lg:py-32 text-center md:text-left">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
