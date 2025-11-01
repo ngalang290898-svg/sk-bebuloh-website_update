@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import LanguageToggle from '../components/LanguageToggle'
+import LanguageToggle from '../../components/LanguageToggle' // Fixed path
 
 export default function HomeLayout({
   children,
