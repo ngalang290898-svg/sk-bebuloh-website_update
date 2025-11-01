@@ -1,74 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  font-family: var(--font-inter);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-montserrat);
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.glass-effect {
-  background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-.glass-card {
-  @apply glass-effect rounded-2xl p-6 shadow-glass;
-}
-
-.glass-card-hover {
-  @apply glass-card transition-all duration-300 hover:shadow-xl hover:scale-105;
-}
-
-.gradient-bg {
-  background: linear-gradient(135deg, #FD661F 0%, #E63946 50%, #FFB84C 100%);
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #FD661F, #E63946);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-/* Ensure navbar & floating button layers work correctly */
-body {
+html, body {
   scroll-behavior: smooth;
 }
 
-.container {
-  max-width: 1200px;
+@layer base {
+  .section {
+    @apply relative py-16 md:py-24;
+  }
+  
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.glass-effect {
+  @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
+
+.glass-dark {
+  @apply bg-black/30 backdrop-blur-md border border-white/10;
 }
