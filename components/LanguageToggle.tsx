@@ -1,6 +1,6 @@
 'use client'
 
-import { useI18n } from '../../lib/i18n'
+import { useI18n } from '../lib/i18n' // Fixed path
 
 export default function LanguageToggle() {
   const { language, changeLanguage } = useI18n()
