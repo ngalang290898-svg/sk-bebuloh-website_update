@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
-import { I18nProvider } from '../lib/i18n'
+import { I18nProvider } from '../lib/i18n' // Fixed path
 
 const inter = Inter({ 
   subsets: ['latin'],
