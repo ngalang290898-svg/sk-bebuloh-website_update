@@ -1,85 +1,129 @@
+// components/Navbar.tsx
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Globe } from "lucide-react";
+import { motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
 
-const navItems = [
-  { key: "home", en: "Home", ms: "Laman Utama", href: "/" },
-  { key: "staff", en: "Staff", ms: "Kakitangan", href: "/staff" },
-  { key: "about", en: "About", ms: "Tentang Sekolah", href: "/about" },
-  { key: "contact", en: "Contact", ms: "Hubungi", href: "/contact" },
-  { key: "rewards", en: "Rewards", ms: "Ganjaran", href: "/rewards" }
-];
+export default function Navbar() {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
-export default function Navbar({ langProp }: { langProp?: string }) {
-  const pathname = usePathname() || "/";
-  const router = useRouter();
-  const [lang, setLang] = useState<string>(() => {
-    // detect language from URL; fallback to prop or 'en'
-    const seg = pathname.split("/").filter(Boolean);
-    return seg[0] === "ms" ? "ms" : seg[0] === "en" ? "en" : langProp ?? "en";
-  });
+  // Determine language from current path
+  const lang = pathname?.includes("/ms") || pathname?.includes("/bm") ? "ms" : "en";
 
-  useEffect(() => {
-    const seg = pathname.split("/").filter(Boolean);
-    const detected = seg[0] === "ms" ? "ms" : seg[0] === "en" ? "en" : langProp ?? "en";
-    setLang(detected);
-  }, [pathname, langProp]);
+  // Define navigation links
+  const links = [
+    { href: `/${lang}`, label_en: "Home", label_ms: "Utama" },
+    { href: `/${lang}/about`, label_en: "About", label_ms: "Tentang Sekolah" },
+    { href: `/${lang}/staff`, label_en: "Staff", label_ms: "Kakitangan" },
+    { href: `/${lang}/rewards`, label_en: "Rewards", label_ms: "Ganjaran" },
+  ];
 
-  const switchLanguage = () => {
+  // Handle language toggle
+  const toggleLang = () => {
     const newLang = lang === "en" ? "ms" : "en";
-    // preserve the rest of the path after language
-    const segments = pathname.split("/");
-    // segments[0] is empty string due to leading slash
-    // form new path: `/${newLang}${rest}`
-    const rest = segments.slice(2).join("/");
-    const newPath = rest ? `/${newLang}/${rest}` : `/${newLang}`;
-    router.push(newPath);
+    const newPath = pathname
+      ? pathname.replace(`/${lang}`, `/${newLang}`)
+      : `/${newLang}`;
+    window.location.href = newPath;
   };
 
-  const buildHref = (href: string) => {
-    // href is like '/' or '/staff' or '/about'
-    if (href === "/") return `/${lang}`;
-    return `/${lang}${href}`;
-  };
+  // Close mobile menu when navigating
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white/70 backdrop-blur-md border-b border-orange-100 z-50 shadow-sm">
-      <div className="container mx-auto px-4 flex items-center justify-between h-14">
-        <Link href={`/${lang}`} className="text-orange-600 font-bold text-lg">
-          SK BEBULOH
+    <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/80 border-b border-orange-100 shadow-sm">
+      <div className="container mx-auto flex items-center justify-between px-4 py-3">
+        {/* Logo / Title */}
+        <Link href={`/${lang}`} className="flex items-center gap-2">
+          <motion.span
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="text-lg sm:text-xl font-bold text-orange-600"
+          >
+            SK Bebuloh Labuan
+          </motion.span>
         </Link>
 
-        <div className="flex items-center gap-5">
-          <div className="hidden sm:flex gap-5">
-            {navItems.map((item) => (
+        {/* Desktop Links */}
+        <nav className="hidden md:flex items-center gap-6">
+          {links.map((link) => {
+            const isActive = pathname === link.href;
+            return (
               <Link
-                key={item.key}
-                href={buildHref(item.href)}
-                className={`text-sm font-medium hover:text-orange-600 ${
-                  pathname.startsWith(`/${lang}${item.href === '/' ? '' : item.href}`)
-                    ? "text-orange-600"
-                    : "text-slate-700"
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-all ${
+                  isActive
+                    ? "text-orange-600 border-b-2 border-orange-500 pb-1"
+                    : "text-slate-700 hover:text-orange-600"
                 }`}
               >
-                {lang === "ms" ? item.ms : item.en}
+                {lang === "ms" ? link.label_ms : link.label_en}
               </Link>
-            ))}
-          </div>
+            );
+          })}
 
           {/* Language Toggle */}
           <button
-            onClick={switchLanguage}
-            className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-orange-600 transition"
-            aria-label="Toggle language"
+            onClick={toggleLang}
+            className="ml-4 px-3 py-1.5 rounded-md border border-orange-300 text-sm font-semibold text-orange-600 hover:bg-orange-50 transition-all"
           >
-            <Globe className="w-4 h-4" />
-            {lang.toUpperCase()}
+            {lang === "ms" ? "EN" : "BM"}
           </button>
-        </div>
+        </nav>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden text-orange-600 focus:outline-none"
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
-    </nav>
+
+      {/* Mobile Dropdown */}
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+          className="md:hidden bg-white/95 backdrop-blur-md border-t border-orange-100 shadow-inner"
+        >
+          <nav className="flex flex-col px-6 py-4 space-y-3">
+            {links.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium transition-all ${
+                    isActive
+                      ? "text-orange-600 font-semibold"
+                      : "text-slate-700 hover:text-orange-600"
+                  }`}
+                >
+                  {lang === "ms" ? link.label_ms : link.label_en}
+                </Link>
+              );
+            })}
+
+            <button
+              onClick={toggleLang}
+              className="mt-3 w-full rounded-md border border-orange-300 py-2 font-semibold text-orange-600 hover:bg-orange-50 transition-all"
+            >
+              {lang === "ms" ? "English" : "Bahasa Melayu"}
+            </button>
+          </nav>
+        </motion.div>
+      )}
+    </header>
   );
 }
