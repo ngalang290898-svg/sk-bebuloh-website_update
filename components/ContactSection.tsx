@@ -4,51 +4,71 @@
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail } from "lucide-react";
 
-export default function ContactSection({ t, lang }: { t: any; lang: string }) {
+export default function ContactSection({
+  t,
+  lang = "en",
+}: {
+  t: any;
+  lang?: string;
+}) {
+  const address =
+    t?.contact_address ??
+    (lang === "ms"
+      ? "SK Bebuloh, WP Labuan, Malaysia"
+      : "SK Bebuloh, WP Labuan, Malaysia");
+
+  const phone = t?.contact_phone ?? "+60 87-465220";
+  const email = t?.contact_email ?? "skbebuloh@moe.edu.my";
+
   return (
-    <section className="py-20 bg-white" id="contact">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-gradient-to-b from-white to-orange-50">
+      <div className="container mx-auto px-4 text-center">
         <motion.h2
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl font-bold text-orange-700 text-center mb-10"
+          transition={{ duration: 0.6 }}
+          className="text-3xl font-bold text-slate-900 mb-10"
         >
           {lang === "ms" ? "Hubungi Kami" : "Contact Us"}
         </motion.h2>
 
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-4 text-slate-700">
-            <p className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-orange-500" />
-              {t?.contact_address}
-            </p>
-            <p className="flex items-center gap-2">
-              <Phone className="w-5 h-5 text-orange-500" />
-              {t?.contact_phone}
-            </p>
-            <p className="flex items-center gap-2">
-              <Mail className="w-5 h-5 text-orange-500" />
-              {t?.contact_email}
-            </p>
-          </div>
+        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center bg-white/80 backdrop-blur-sm shadow rounded-2xl p-6"
+          >
+            <MapPin className="w-8 h-8 text-orange-600 mb-3" />
+            <p className="text-slate-700">{address}</p>
+          </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-            className="rounded-2xl overflow-hidden shadow-lg"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex flex-col items-center bg-white/80 backdrop-blur-sm shadow rounded-2xl p-6"
           >
-            <iframe
-              title="SK Bebuloh Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.2936072621966!2d115.239!3d5.3105!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x324b97d3b3a9e7ef%3A0x7f73b3b4e9f1f05f!2sSekolah%20Kebangsaan%20Bebuloh!5e0!3m2!1sen!2smy!4v1698765432100!5m2!1sen!2smy"
-              width="100%"
-              height="300"
-              allowFullScreen
-              loading="lazy"
-            ></iframe>
+            <Phone className="w-8 h-8 text-orange-600 mb-3" />
+            <p className="text-slate-700">{phone}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col items-center bg-white/80 backdrop-blur-sm shadow rounded-2xl p-6"
+          >
+            <Mail className="w-8 h-8 text-orange-600 mb-3" />
+            <p className="text-slate-700">{email}</p>
           </motion.div>
         </div>
+
+        <p className="text-xs text-slate-500 mt-8">
+          {lang === "ms"
+            ? "Kami mengalu-alukan sebarang pertanyaan atau maklum balas daripada anda."
+            : "We welcome your inquiries or feedback at any time."}
+        </p>
       </div>
     </section>
   );
