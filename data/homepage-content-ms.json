@@ -4,10 +4,8 @@
   "school_code": "WBA1001",
   "motto": "Superbia, Unitas, Triumphus",
 
-  "about": {
-    "title": "Tentang Sekolah",
-    "description": "Sekolah Kebangsaan Bebuloh merupakan institusi pendidikan rendah di WP Labuan yang berkomitmen melahirkan generasi cemerlang melalui pembelajaran holistik dan berteraskan nilai."
-  },
+  "about_title": "Tentang Sekolah",
+  "about_description": "Sekolah Kebangsaan Bebuloh ialah sebuah sekolah rendah di Labuan yang berdedikasi dalam melahirkan kecemerlangan melalui pendidikan menyeluruh dan pembelajaran berteraskan nilai-nilai murni.",
 
   "principal": {
     "name": "Encik Maidan Dali @ Sumardi Bin Yusoff",
@@ -15,26 +13,21 @@
     "message": "Sebagai warga SK Bebuloh, kami berpegang kepada nilai kesepaduan dan kecemerlangan dalam mendidik anak bangsa."
   },
 
-  "vision": {
-    "title": "Visi",
-    "text": "Menjana kecemerlangan pendidikan melalui perpaduan dan nilai."
-  },
+  "vision": "Menjana kecemerlangan pendidikan melalui perpaduan dan nilai-nilai murni.",
+  "mission": "Melahirkan pelajar berilmu dan berakhlak melalui pengajaran berkualiti.",
 
-  "mission": {
-    "title": "Misi",
-    "text": "Melahirkan pelajar berilmu dan berakhlak mulia melalui pengajaran berkualiti."
-  },
+  "contact_address": "SK Bebuloh, WP Labuan, Malaysia",
+  "contact_phone": "+60 87-465220",
+  "contact_email": "skbebuloh@moe.edu.my",
 
-  "contact": {
-    "title": "Hubungi Kami",
-    "address": "SK Bebuloh, WP Labuan, Malaysia",
-    "phone": "+60 87-465220",
-    "email": "skbebuloh@moe.edu.my"
-  },
+  "meet_staff_cta": "Kenali Warga Sekolah",
+  "learn_more": "Tentang Sekolah",
+  "scroll_cta": "Lihat Warga Sekolah",
+  "staff_page_title": "Senarai Kakitangan",
+  "staff_page_description": "Kenali barisan pendidik dan kakitangan yang berdedikasi di SK Bebuloh Labuan.",
 
-  "cta": {
-    "meet_staff": "Kakitangan",
-    "learn_more": "Tentang",
-    "scroll_cta": "Kenali pasukan kami"
-  }
+  "headmaster": "Guru Besar",
+  "administrativeAssistants": "Barisan Penolong Kanan",
+  "general_teachers": "Guru",
+  "support_staff": "Kakitangan Sokongan"
 }
