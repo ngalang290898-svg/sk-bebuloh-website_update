@@ -30,7 +30,19 @@ const translations = {
     'staff.title': 'Featured Staff',
     'staff.subtitle': 'Meet our dedicated team of educators',
     'staff.cta': 'View All Staff',
-    // Add more translations...
+    'pk.title': 'Academic Sections',
+    'pk.subtitle': 'Our dedicated academic teams',
+    'pk.kurikulum': 'Curriculum',
+    'pk.hem': 'Student Affairs',
+    'pk.kokurikulum': 'Co-curriculum',
+    'achievements.title': 'School Achievements',
+    'achievements.subtitle': 'Celebrating excellence and success',
+    'news.title': 'News & Events',
+    'news.subtitle': 'Latest updates from our school',
+    'news.news': 'News',
+    'news.events': 'Events',
+    'contact.title': 'Contact Us',
+    'contact.subtitle': 'Get in touch with our school',
   },
   ms: {
     'hero.title': 'Selamat Datang ke SK Bebuloh WP Labuan',
@@ -48,7 +60,19 @@ const translations = {
     'staff.title': 'Staf Terpilih',
     'staff.subtitle': 'Bertemu dengan pasukan pendidik kami yang berdedikasi',
     'staff.cta': 'Lihat Semua Staf',
-    // Add more translations...
+    'pk.title': 'Bahagian Akademik',
+    'pk.subtitle': 'Pasukan akademik kami yang berdedikasi',
+    'pk.kurikulum': 'Kurikulum',
+    'pk.hem': 'Hal Ehwal Murid',
+    'pk.kokurikulum': 'Kokurikulum',
+    'achievements.title': 'Pencapaian Sekolah',
+    'achievements.subtitle': 'Meraikan kecemerlangan dan kejayaan',
+    'news.title': 'Berita & Acara',
+    'news.subtitle': 'Kemas kini terkini dari sekolah kami',
+    'news.news': 'Berita',
+    'news.events': 'Acara',
+    'contact.title': 'Hubungi Kami',
+    'contact.subtitle': 'Berhubung dengan sekolah kami',
   }
 }
 
