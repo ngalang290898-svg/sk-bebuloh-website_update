@@ -34,10 +34,11 @@ export function useLocaleContent(lang?: string) {
           lang === "bm" ? "ms" : ["en", "ms"].includes(lang || "")
             ? lang
             : "en";
-        const module = await import(
+        // ✅ renamed from "module" → "localeModule"
+        const localeModule = await import(
           `@/data/homepage-content-${locale}.json`
         );
-        setContent(module.default);
+        setContent(localeModule.default);
       } catch (error) {
         console.error("❌ Failed to load locale JSON via hook:", error);
       }
