@@ -4,51 +4,61 @@
 import { motion } from "framer-motion";
 import { Eye, Target } from "lucide-react";
 
-export default function VisionMission({ t, lang }: { t: any; lang: string }) {
-  const vision = t.vision?.text ?? "";
-  const mission = t.mission?.text ?? "";
+export default function VisionMission({
+  t,
+  lang = "en",
+}: {
+  t: any;
+  lang?: string;
+}) {
+  const vision =
+    t?.vision ??
+    (lang === "ms"
+      ? "Menjana kecemerlangan pendidikan melalui perpaduan dan nilai-nilai murni."
+      : "To cultivate excellence in education through unity and values.");
+
+  const mission =
+    t?.mission ??
+    (lang === "ms"
+      ? "Melahirkan pelajar berilmu dan berakhlak melalui pengajaran berkualiti."
+      : "To nurture knowledgeable and ethical students through quality teaching.");
 
   return (
-    <section className="py-16 bg-orange-50/50">
-      <div className="container mx-auto px-4">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+    <section className="py-20 bg-orange-50">
+      <div className="container mx-auto px-4 grid md:grid-cols-2 gap-10">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl font-bold text-orange-700 text-center mb-10"
+          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow p-8"
         >
-          {lang === "ms" ? "Visi & Misi" : "Vision & Mission"}
-        </motion.h2>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
+              <Eye className="w-5 h-5 text-orange-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-slate-900">
+              {lang === "ms" ? "Visi Sekolah" : "School Vision"}
+            </h2>
+          </div>
+          <p className="text-slate-700 leading-relaxed">{vision}</p>
+        </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Vision */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow"
-          >
-            <Eye className="w-10 h-10 text-orange-500 mb-3" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">
-              {t.vision?.title ?? (lang === "ms" ? "Visi" : "Vision")}
-            </h3>
-            <p className="text-slate-700 leading-relaxed">{vision}</p>
-          </motion.div>
-
-          {/* Mission */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow"
-          >
-            <Target className="w-10 h-10 text-orange-500 mb-3" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">
-              {t.mission?.title ?? (lang === "ms" ? "Misi" : "Mission")}
-            </h3>
-            <p className="text-slate-700 leading-relaxed">{mission}</p>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow p-8"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
+              <Target className="w-5 h-5 text-orange-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-slate-900">
+              {lang === "ms" ? "Misi Sekolah" : "School Mission"}
+            </h2>
+          </div>
+          <p className="text-slate-700 leading-relaxed">{mission}</p>
+        </motion.div>
       </div>
     </section>
   );
