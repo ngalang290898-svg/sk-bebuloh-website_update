@@ -12,7 +12,7 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
-// Mock translations - replace with actual JSON files
+// Use your existing translation structure
 const translations = {
   en: {
     'hero.title': 'Welcome to SK Bebuloh WP Labuan',
@@ -80,7 +80,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('en')
 
   useEffect(() => {
-    // Check for saved language preference
     const savedLang = localStorage.getItem('preferred-language') as Language
     if (savedLang && (savedLang === 'en' || savedLang === 'ms')) {
       setLanguage(savedLang)
