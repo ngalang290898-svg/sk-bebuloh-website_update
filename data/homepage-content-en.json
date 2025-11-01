@@ -4,10 +4,8 @@
   "school_code": "WBA1001",
   "motto": "Superbia, Unitas, Triumphus",
 
-  "about": {
-    "title": "About the School",
-    "description": "Sekolah Kebangsaan Bebuloh is a primary school in Labuan dedicated to nurturing excellence through holistic education and values-driven learning."
-  },
+  "about_title": "About the School",
+  "about_description": "Sekolah Kebangsaan Bebuloh is a primary school in Labuan dedicated to nurturing excellence through holistic education and values-driven learning.",
 
   "principal": {
     "name": "Mr. Maidan Dali @ Sumardi Bin Yusoff",
@@ -15,26 +13,21 @@
     "message": "As part of SK Bebuloh, we uphold unity and excellence in shaping young minds for a brighter future."
   },
 
-  "vision": {
-    "title": "Vision",
-    "text": "To cultivate excellence in education through unity and values."
-  },
+  "vision": "To cultivate excellence in education through unity and values.",
+  "mission": "To nurture knowledgeable and ethical students through quality teaching.",
 
-  "mission": {
-    "title": "Mission",
-    "text": "To nurture knowledgeable and ethical students through quality teaching."
-  },
+  "contact_address": "SK Bebuloh, WP Labuan, Malaysia",
+  "contact_phone": "+60 87-465220",
+  "contact_email": "skbebuloh@moe.edu.my",
 
-  "contact": {
-    "title": "Contact Us",
-    "address": "SK Bebuloh, WP Labuan, Malaysia",
-    "phone": "+60 87-465220",
-    "email": "skbebuloh@moe.edu.my"
-  },
+  "meet_staff_cta": "Meet Our Team",
+  "learn_more": "About",
+  "scroll_cta": "Meet the Team",
+  "staff_page_title": "Our Staff",
+  "staff_page_description": "Meet the dedicated educators and staff of SK Bebuloh Labuan.",
 
-  "cta": {
-    "meet_staff": "Meet Our Team",
-    "learn_more": "About",
-    "scroll_cta": "Meet the team"
-  }
+  "headmaster": "Headmaster",
+  "administrativeAssistants": "Administrative Assistants",
+  "general_teachers": "Teachers",
+  "support_staff": "Support Staff"
 }
