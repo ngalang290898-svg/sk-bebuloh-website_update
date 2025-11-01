@@ -1,23 +1,37 @@
-// app/layout.tsx
-import "./globals.css";
-import Navbar from "@/components/Navbar";
-import { Inter, Montserrat } from "next/font/google";
+import type { Metadata } from 'next'
+import { Inter, Poppins } from 'next/font/google'
+import './globals.css'
+import { I18nProvider } from '../lib/i18n'
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-body',
+})
 
-export const metadata = {
-  title: "SK Bebuloh Labuan",
-  description: "Official website of Sekolah Kebangsaan Bebuloh Labuan",
-};
+const poppins = Poppins({ 
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-heading',
+})
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata: Metadata = {
+  title: 'SK Bebuloh WP Labuan - Sekolah Kebangsaan Bebuloh WP Labuan',
+  description: 'Official website of Sekolah Kebangsaan Bebuloh WP Labuan - A premier educational institution in Labuan',
+  keywords: 'SK Bebuloh, Labuan, education, sekolah, primary school',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
-      <body className="bg-[#fffaf8] text-slate-800 antialiased">
-        <Navbar />
-        <div className="pt-14">{children}</div>
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+      <body className="font-body antialiased">
+        <I18nProvider>
+          {children}
+        </I18nProvider>
       </body>
     </html>
-  );
+  )
 }
